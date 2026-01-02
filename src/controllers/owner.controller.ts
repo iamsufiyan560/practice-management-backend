@@ -95,10 +95,10 @@ export const createOwner = async (req: Request, res: Response) => {
     const [existingOwner] = await db
       .select()
       .from(owners)
-      .where(and(eq(owners.email, email), eq(owners.isDeleted, false)))
+      .where(eq(owners.email, email))
       .limit(1);
 
-    if (existingOwner) {
+    if (existingOwner && existingOwner.isDeleted === false) {
       logger.warn(`Create owner: email already exists - ${email}`);
       return response.conflict(res, "Owner with this email already exists");
     }
@@ -106,17 +106,45 @@ export const createOwner = async (req: Request, res: Response) => {
     const tempPassword = generateSecurePassword();
     const passwordHash = await hashPassword(tempPassword);
 
-    const ownerId = crypto.randomUUID();
+    let ownerId: string;
 
-    await db.insert(owners).values({
-      id: ownerId,
-      email,
-      passwordHash,
-      firstName,
-      lastName,
-      createdBy,
-      updatedBy: createdBy,
-    });
+    if (existingOwner && existingOwner.isDeleted === true) {
+      ownerId = existingOwner.id;
+
+      await db
+        .update(owners)
+        .set({
+          passwordHash,
+          firstName,
+          lastName,
+          isDeleted: false,
+          updatedBy: createdBy,
+        })
+        .where(eq(owners.id, ownerId));
+
+      logger.info(`Owner recreated by ${createdBy} - ${email}`);
+    } else {
+      const [inserted] = await db
+        .insert(owners)
+        .values({
+          email,
+          passwordHash,
+          firstName,
+          lastName,
+          createdBy,
+          updatedBy: createdBy,
+        })
+        .$returningId();
+
+      if (!inserted) {
+        logger.error("Create owner failed: insert returned no id", { email });
+        return response.error(res, "Failed to create owner");
+      }
+
+      ownerId = inserted.id;
+
+      logger.info(`Owner created by ${createdBy} - ${email}`);
+    }
 
     const emailHtml = generateOwnerAccountCreatedEmail({
       email,
@@ -136,14 +164,17 @@ export const createOwner = async (req: Request, res: Response) => {
       });
     });
 
-    logger.info(`Owner created by ${createdBy} - ${email}`);
-
     return response.created(
       res,
       { id: ownerId, email },
       "Owner created successfully",
     );
-  } catch (err) {
+  } catch (err: any) {
+    if (err?.code === "ER_DUP_ENTRY") {
+      logger.warn(`Create owner duplicate email race - ${req.body?.email}`);
+      return response.conflict(res, "Owner with this email already exists");
+    }
+
     logger.error("Create owner error", { error: err });
     return response.error(res, "Failed to create owner");
   }
@@ -391,13 +422,14 @@ export const deleteOwnerProfile = async (req: Request, res: Response) => {
       })
       .where(eq(owners.id, ownerId));
 
-    // revoke all sessions of this owner
     await db
       .update(authSessions)
       .set({ isRevoked: true })
       .where(eq(authSessions.userId, ownerId));
 
-    clearAuthCookie(res);
+    if (req.user?.userId === ownerId) {
+      clearAuthCookie(res);
+    }
 
     logger.info(`Owner profile deleted - ${ownerId}`);
 

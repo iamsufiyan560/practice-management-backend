@@ -57,6 +57,9 @@ Requires: `requireAuth`
 GET `/owner/dashboard` — Owner dashboard  
 Requires: `requireAuth`
 
+Get `/owner/list` - get all owners
+Requires: `requireAuth`
+
 ---
 
 ### Password

@@ -28,10 +28,6 @@ export async function requireAuth(
   try {
     const cookie = req.cookies?.auth;
 
-    logger.warn("Auth cookie received", {
-      sessionId: req.cookies?.auth?.sessionId,
-    });
-
     if (!cookie?.sessionId) {
       return response.unauthorized(res, "Unauthorized");
     }

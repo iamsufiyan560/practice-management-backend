@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { eq, and, count } from "drizzle-orm";
+import { eq, and, count, desc } from "drizzle-orm";
 import { db } from "../db/index.js";
 
 import { owners } from "../db/schema/owners.schema.js";
@@ -219,7 +219,14 @@ export const getOwnerMe = async (req: Request, res: Response) => {
     const userId = req.user?.userId!;
 
     const [owner] = await db
-      .select()
+      .select({
+        id: owners.id,
+        email: owners.email,
+        firstName: owners.firstName,
+        lastName: owners.lastName,
+        createdAt: owners.createdAt,
+        updatedAt: owners.updatedAt,
+      })
       .from(owners)
       .where(and(eq(owners.id, userId), eq(owners.isDeleted, false)))
       .limit(1);
@@ -231,13 +238,7 @@ export const getOwnerMe = async (req: Request, res: Response) => {
 
     logger.info(`Owner /me successful - ${owner.email}`);
 
-    return response.ok(res, {
-      id: owner.id,
-      email: owner.email,
-      firstName: owner.firstName,
-      lastName: owner.lastName,
-      createdAt: owner.createdAt,
-    });
+    return response.ok(res, owner);
   } catch (err) {
     logger.error("Owner /me error", { error: err });
     return response.error(res, "Failed to fetch user data");
@@ -259,7 +260,14 @@ export const getOwnerProfile = async (req: Request, res: Response) => {
     }
 
     const [owner] = await db
-      .select()
+      .select({
+        id: owners.id,
+        email: owners.email,
+        firstName: owners.firstName,
+        lastName: owners.lastName,
+        createdAt: owners.createdAt,
+        updatedAt: owners.updatedAt,
+      })
       .from(owners)
       .where(and(eq(owners.id, ownerId), eq(owners.isDeleted, false)))
       .limit(1);
@@ -271,17 +279,36 @@ export const getOwnerProfile = async (req: Request, res: Response) => {
 
     logger.info(`Owner profile retrieved - ${ownerId}`);
 
-    return response.ok(res, {
-      id: owner.id,
-      email: owner.email,
-      firstName: owner.firstName,
-      lastName: owner.lastName,
-      createdAt: owner.createdAt,
-      updatedAt: owner.updatedAt,
-    });
+    return response.ok(res, owner);
   } catch (err) {
     logger.error("Get owner profile error", { error: err });
     return response.error(res, "Failed to fetch profile");
+  }
+};
+
+//get getAllOwners
+
+export const getAllOwners = async (req: Request, res: Response) => {
+  try {
+    const ownersList = await db
+      .select({
+        id: owners.id,
+        email: owners.email,
+        firstName: owners.firstName,
+        lastName: owners.lastName,
+        createdAt: owners.createdAt,
+        updatedAt: owners.updatedAt,
+      })
+      .from(owners)
+      .where(eq(owners.isDeleted, false))
+      .orderBy(desc(owners.createdAt));
+
+    logger.info(`All owners retrieved`, { count: ownersList.length });
+
+    return response.ok(res, ownersList);
+  } catch (err) {
+    logger.error("Get all owners error", { error: err });
+    return response.error(res, "Failed to fetch owners");
   }
 };
 

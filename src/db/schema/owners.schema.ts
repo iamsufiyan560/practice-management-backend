@@ -23,10 +23,10 @@ export const owners = mysqlTable(
     createdBy: char("created_by", { length: 36 }),
     updatedBy: char("updated_by", { length: 36 }),
 
-    isDeleted: boolean("is_deleted").default(false),
+    isDeleted: boolean("is_deleted").default(false).notNull(),
 
-    createdAt: timestamp("created_at").defaultNow(),
-    updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
   },
-  (t) => [index("owners_email_idx").on(t.email)],
+  (t) => [index("owners_active_created_idx").on(t.isDeleted, t.createdAt)],
 );

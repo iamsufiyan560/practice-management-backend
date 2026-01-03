@@ -12,6 +12,7 @@ import {
   ownerChangePassword,
   generateFirstOwner,
   createOwner,
+  getAllOwners,
 } from "../controllers/index.js";
 import { requireAuth, validate } from "../middleware/index.js";
 import {
@@ -53,6 +54,8 @@ router.put(
 router.delete("/profile/:ownerId", requireAuth, deleteOwnerProfile);
 
 router.get("/dashboard", requireAuth, getOwnerDashboard);
+
+router.get("/list", requireAuth, getAllOwners);
 
 router.post(
   "/forgot-password",

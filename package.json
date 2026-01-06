@@ -40,6 +40,7 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
+    "test:email": "tsx src/script/test-email.ts",
     "push": "git push origin main"
   }
 }

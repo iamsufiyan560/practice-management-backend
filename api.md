@@ -1,102 +1,209 @@
 # API LIST
 
-Base URL: `/api/v1`
+**Base URL:** `/api/v1`
 
 ---
 
-# 🔐 OWNER ROUTES (owner.routes.ts)
+# 🔐 OWNER (owner.routes.ts)
 
 ### Auth
 
-POST `/owner/generate-first-owner` - Generate First owner
-POST `/owner/login` — ownerLogin
-POST `/owner/logout` — ownerLogout
-GET `/owner/me` — getOwnerMe
+POST `/owner/generate-first-owner` — Generate first owner
 
-### Profile
+Validation:
 
-GET `/owner/profile/:ownerId` — getOwnerProfile
-PUT `/owner/profile/:ownerId` — updateOwnerProfile
-DELETE `/owner/profile/:ownerId` — deleteOwnerProfile
+- generateFirstOwnerSchema
 
-### Dashboard
+POST `/owner/create-owner` — Create owner  
+Requires: `requireAuth`
 
-GET `/owner/dashboard` — getOwnerDashboard
+Validation:
 
-### Password
+- createOwnerSchema
 
-POST `/owner/forgot-password` — ownerForgotPassword
-POST `/owner/reset-password` — ownerResetPassword
-PUT `/owner/change-password` — ownerChangePassword
+POST `/owner/login` — Owner login
+
+Validation:
+
+- loginSchema
+
+POST `/owner/logout` — Owner logout  
+Requires: `requireAuth`
+
+GET `/owner/me` — Get logged-in owner  
+Requires: `requireAuth`
 
 ---
 
-# 🔐 USER AUTH (auth.routes.ts)
+### Profile
 
-POST `/auth/login` — userLogin
-POST `/auth/logout` — userLogout
-GET `/auth/me` — getLoggedInUser
+GET `/owner/profile/:ownerId` — Get owner profile  
+Requires: `requireAuth`
 
-POST `/auth/forgot-password` — userForgotPassword
-POST `/auth/reset-password` — userResetPassword
-PUT `/auth/change-password` — userChangePassword
+PUT `/owner/profile/:ownerId` — Update owner profile  
+Requires: `requireAuth`
+
+Validation:
+
+- updateOwnerSchema
+
+DELETE `/owner/profile/:ownerId` — Delete owner profile  
+Requires: `requireAuth`
+
+---
+
+### Dashboard
+
+GET `/owner/dashboard` — Owner dashboard  
+Requires: `requireAuth`
+
+---
+
+### Password
+
+POST `/owner/forgot-password` — Forgot password
+
+Validation:
+
+- forgotPasswordSchema
+
+POST `/owner/reset-password` — Reset password
+
+Validation:
+
+- resetPasswordSchema
+
+PUT `/owner/change-password` — Change password  
+Requires: `requireAuth`
+
+Validation:
+
+- changePasswordSchema
+
+---
+
+# 🔐 AUTH (auth.routes.ts)
+
+POST `/auth/login` — User login
+
+Validation:
+
+- loginSchema
+
+POST `/auth/logout` — User logout  
+Requires: `requireAuth`
+
+GET `/auth/me` — Get logged-in user  
+Requires: `requireAuth`
+
+POST `/auth/forgot-password` — Forgot password
+
+Validation:
+
+- forgotPasswordSchema
+
+POST `/auth/reset-password` — Reset password
+
+Validation:
+
+- resetPasswordSchema
+
+PUT `/auth/change-password` — Change password  
+Requires: `requireAuth`
+
+Validation:
+
+- changePasswordSchema
 
 ---
 
 # 🏥 PRACTICES (practices.routes.ts)
 
-POST `/practices/create` — createPractice
-GET `/practices/list` — getAllPractices
-GET `/practices/:practiceId` — getPracticeById
-PUT `/practices/:practiceId` — updatePractice
-DELETE `/practices/:practiceId` — deletePractice
+All routes require: `requireAuth`
+
+POST `/practices/create` — Create practice
+
+Validation:
+
+- createPracticeSchema
+
+GET `/practices/list` — Get all practices
+
+GET `/practices/:practiceId` — Get practice by ID
+
+PUT `/practices/:practiceId` — Update practice
+
+Validation:
+
+- updatePracticeSchema
+
+DELETE `/practices/:practiceId` — Delete practice
 
 ---
 
 # 👨‍💼 ADMINS (admins.routes.ts)
 
-POST `/admins/create` — createAdmin
-PUT `/admins/:adminId` — updateAdmin
-DELETE `/admins/:adminId` — deleteAdmin
-
-GET `/admins/list` — getAllAdminsByPractice
-GET `/admins/:adminId` — getAdminById
-GET `/admins/inactive` — get all inactive admin
+All routes require: `requireAuth + practiceContext`
 
 Uses:
 
 ```
 req.practiceId
 ```
+
+POST `/admins/create` — Create admin
+
+Validation:
+
+- createAdminSchema
+
+PUT `/admins/:adminId` — Update admin
+
+Validation:
+
+- updateAdminSchema
+
+DELETE `/admins/:adminId` — Delete admin
+
+GET `/admins/list` — Get all admins by practice  
+GET `/admins/inactive` — Get inactive admins  
+GET `/admins/:adminId` — Get admin by ID
 
 ---
 
 # 🧑‍⚕️ SUPERVISORS (supervisors.routes.ts)
 
-POST `/supervisors/create` — createSupervisor
-PUT `/supervisors/:supervisorId` — updateSupervisor
-DELETE `/supervisors/:supervisorId` — deleteSupervisor
-
-GET `/supervisors/list` — getAllSupervisorsByPractice
-GET `/supervisors/:supervisorId` — getSupervisorById
+All routes require: `requireAuth + practiceContext`
 
 Uses:
 
 ```
 req.practiceId
 ```
+
+POST `/supervisors/create` — Create supervisor
+
+Validation:
+
+- createSupervisorSchema
+
+PUT `/supervisors/:supervisorId` — Update supervisor
+
+Validation:
+
+- updateSupervisorSchema
+
+DELETE `/supervisors/:supervisorId` — Delete supervisor
+
+GET `/supervisors/list` — Get all supervisors  
+GET `/supervisors/inactive` — Get inactive supervisors  
+GET `/supervisors/:supervisorId` — Get supervisor by ID
 
 ---
 
 # 🧑‍⚕️ THERAPISTS (therapists.routes.ts)
 
-POST `/therapists/create` — createTherapist
-PUT `/therapists/:therapistId` — updateTherapist
-DELETE `/therapists/:therapistId` — deleteTherapist
-
-GET `/therapists/list` — getAllTherapistsByPractice
-GET `/therapists/:therapistId` — getTherapistById
-GET `/therapists/inactive` — getAllInactiveTherapistsByPractice
+All routes require: `requireAuth + practiceContext`
 
 Uses:
 
@@ -104,32 +211,29 @@ Uses:
 req.practiceId
 ```
 
----
+POST `/therapists/create` — Create therapist
 
-# 🔗 ASSIGNMENTS (assignments.routes.ts)
+Validation:
 
-PUT `/assign/therapist-to-supervisor` — assignTherapistToSupervisor
+- createTherapistSchema
 
-PUT `/assign/patient-to-therapist` — assignPatientToTherapist
+PUT `/therapists/:therapistId` — Update therapist
 
-Uses:
+Validation:
 
-```
-req.practiceId
-```
+- updateTherapistSchema
+
+DELETE `/therapists/:therapistId` — Delete therapist
+
+GET `/therapists/list` — Get all therapists  
+GET `/therapists/inactive` — Get inactive therapists  
+GET `/therapists/:therapistId` — Get therapist by ID
 
 ---
 
 # 🧍 PATIENTS (patients.routes.ts)
 
-POST `/patients/create` — createPatient
-POST `/create-by-therapist` — createPatientByTherapist
-GET `/patients/list` — getAllPatientsByPractice
-GET `/patients/:patientId` — getPatientById
-PUT `/patients/:patientId` — updatePatient
-DELETE `/patients/:patientId` — deletePatient
-
-GET `/therapists/:therapistId/patients` — getPatientsByTherapist
+All routes require: `requireAuth + practiceContext`
 
 Uses:
 
@@ -137,15 +241,35 @@ Uses:
 req.practiceId
 ```
 
+POST `/patients/create` — Create patient
+
+Validation:
+
+- createPatientSchema
+
+POST `/patients/create-by-therapist` — Create patient by therapist
+
+Validation:
+
+- createPatientSchema
+
+PUT `/patients/:patientId` — Update patient
+
+Validation:
+
+- updatePatientSchema
+
+DELETE `/patients/:patientId` — Delete patient
+
+GET `/patients/list` — Get all patients  
+GET `/patients/therapist/:therapistId` — Get patients by therapist  
+GET `/patients/:patientId` — Get patient by ID
+
 ---
 
-# 📝 SESSIONS CORE (sessions.routes.ts)
+# 🔗 ASSIGNMENTS (assignments.routes.ts)
 
-All session routes require:
-
-```
-requireAuth + practiceContext
-```
+All routes require: `requireAuth + practiceContext`
 
 Uses:
 
@@ -153,74 +277,94 @@ Uses:
 req.practiceId
 ```
 
----
+PUT `/assignments/therapist-to-supervisor` — Assign therapist to supervisor
 
-## 🔹 SESSION CRUD
+Validation:
 
-POST `/sessions/create` — createSession  
-Create a new therapy session
+- assignTherapistToSupervisorSchema
 
-GET `/sessions/:sessionId` — getSessionById  
-Get single session by ID
+PUT `/assignments/patient-to-therapist` — Assign patient to therapist
 
-PUT `/sessions/:sessionId` — updateSession  
-Update session details
+Validation:
 
-DELETE `/sessions/:sessionId` — deleteSession  
-Delete a session
+- assignPatientToTherapistSchema
 
 ---
 
-## 🔹 PATIENT SESSION APIs
+# 📝 SESSIONS (sessions.routes.ts)
 
-GET `/sessions/patient/:patientId/history` — getPatientSessionHistory  
-Get full session history for a patient
+All routes require: `requireAuth + practiceContext`
 
-GET `/sessions/patient/:patientId/latest` — getLatestPatientSession  
-Get latest session of a patient
+Uses:
+
+```
+req.practiceId
+```
+
+### Session CRUD
+
+POST `/sessions/create` — Create session
+
+Validation:
+
+- createSessionSchema
+
+GET `/sessions/:sessionId` — Get session by ID
+
+PUT `/sessions/:sessionId` — Update session
+
+Validation:
+
+- updateSessionSchema
+
+DELETE `/sessions/:sessionId` — Delete session
 
 ---
 
-## 🔹 THERAPIST SESSION STATES
+### Patient Session
 
-GET `/sessions/my-drafts` — getDraftSessionsByTherapist  
-Get all draft sessions of logged-in therapist
-
-GET `/sessions/my-upcoming` — getUpcomingSessionsByTherapist  
-Get upcoming sessions of logged-in therapist
+GET `/sessions/patient/:patientId/history` — Patient session history  
+GET `/sessions/patient/:patientId/latest` — Latest patient session
 
 ---
 
-## 🔹 SUPERVISOR REVIEW FLOW
+### Therapist
 
-GET `/sessions/pending-review` — getPendingReviewSessions  
-Get sessions pending for supervisor review
+GET `/sessions/my-drafts` — Therapist draft sessions  
+GET `/sessions/my-upcoming` — Therapist upcoming sessions
 
-PUT `/sessions/send-for-review/:sessionId` — sendSessionForReview  
-Therapist sends session for supervisor review
+---
 
-PUT `/sessions/approve/:sessionId` — approveSession  
-Supervisor approves session
+### Supervisor Review Flow
 
-PUT `/sessions/reject/:sessionId` — rejectSession  
-Supervisor rejects session (with note)
+GET `/sessions/pending-review` — Pending review sessions
 
-Validation used:
+PUT `/sessions/send-for-review/:sessionId` — Send session for review
 
-- `createSessionSchema`
-- `updateSessionSchema`
-- `reviewSessionSchema`
+PUT `/sessions/approve/:sessionId` — Approve session
+
+Validation:
+
+- reviewSessionSchema
+
+PUT `/sessions/reject/:sessionId` — Reject session
+
+Validation:
+
+- reviewSessionSchema
 
 ---
 
 # 📊 DASHBOARD (dashboard.routes.ts)
 
-GET `/dashboard/admin` — getAdminDashboard
-GET `/dashboard/supervisor/:supervisorId` — getSupervisorDashboard
-GET `/dashboard/therapist/:therapistId` — getTherapistDashboard
+All routes require: `requireAuth + practiceContext`
 
 Uses:
 
 ```
 req.practiceId
 ```
+
+GET `/dashboard/admin` — Admin dashboard  
+GET `/dashboard/supervisor` — Supervisor dashboard  
+GET `/dashboard/therapist` — Therapist dashboard

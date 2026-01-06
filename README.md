@@ -1,76 +1,215 @@
-<!--
-title: 'Serverless Framework Node Express API on AWS'
-description: 'This template demonstrates how to develop and deploy a simple Node Express API running on AWS Lambda using the Serverless Framework.'
-layout: Doc
-framework: v4
-platform: AWS
-language: nodeJS
-priority: 1
-authorLink: 'https://github.com/serverless'
-authorName: 'Serverless, Inc.'
-authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
--->
+# Practice Management API
 
-# Serverless Framework Node Express API on AWS
+Backend service for a multi-practice management system with secure authentication, role-based access, and structured session workflows.  
+Built as a serverless-ready Express backend with fast local development support.
 
-This template demonstrates how to develop and deploy a simple Node Express API service running on AWS Lambda using the Serverless Framework.
+API reference → **api.md**
 
-This template configures a single function, `api`, which is responsible for handling all incoming requests using the `httpApi` event. To learn more about `httpApi` event configuration options, please refer to [httpApi event docs](https://www.serverless.com/framework/docs/providers/aws/events/http-api/). As the event is configured in a way to accept all incoming requests, the Express.js framework is responsible for routing and handling requests internally. This implementation uses the `serverless-http` package to transform the incoming event request payloads to payloads compatible with Express.js. To learn more about `serverless-http`, please refer to the [serverless-http README](https://github.com/dougmoscrop/serverless-http).
+---
 
-## Usage
+## Tech Stack
 
-### Deployment
+### Core
 
-Install dependencies with:
+<p>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" width="22"/> Node.js
+  &nbsp;&nbsp;&nbsp;
+  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-V5LcH5U7RKfkRED6sF9bt-xSzNtAs5KUYa5P3ZwiT-TW288fF5pEtI_695EVau1g48c&usqp=CAU" width="22" /> Express
+  &nbsp;&nbsp;&nbsp;
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" width="22"/> TypeScript
+  &nbsp;&nbsp;&nbsp;
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg" width="22"/> AWS Lambda (Serverless)
+</p>
+
+### Database
+
+<p>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" width="22"/> MySQL
+  &nbsp;&nbsp;&nbsp;
+  <img src="https://avatars.githubusercontent.com/u/108468352?s=200&v=4" width="22"/> Drizzle ORM
+</p>
+
+### Auth, Security & Validation
+
+<p>
+  <img src="https://avatars.githubusercontent.com/u/22194067?v=4" width="22"/> bcrypt
+  &nbsp;&nbsp;&nbsp;
+  <img src="https://raw.githubusercontent.com/colinhacks/zod/master/logo.svg" width="22"/> Zod
+  &nbsp;&nbsp;&nbsp;
+<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXTGNNg4iV7eyjNtMiCJYw6KGRFhA4D84-Zw&s" width="20"/> Cookie Sessions
+  &nbsp;&nbsp;&nbsp;
+  <img src="https://avatars.githubusercontent.com/u/117689732?s=200&v=4" width="20"/> Rate Limiting
+  &nbsp;&nbsp;&nbsp;
+  <img src="https://cdn-icons-png.flaticon.com/512/2433/2433469.png" width="20"/> Field Encryption
+</p>
+
+### Infra & Utilities
+
+<p>
+  <img src="https://www.vectorlogo.zone/logos/serverless/serverless-icon.svg" width="22"/> Serverless Framework
+  &nbsp;&nbsp;&nbsp;
+  <img src="https://raw.githubusercontent.com/nodemailer/nodemailer/master/assets/nm_logo_200x136.png" width="22"/> Nodemailer (SMTP)
+  &nbsp;&nbsp;&nbsp;
+  <img src="https://avatars.githubusercontent.com/u/9682013?v=4" width="22"/> Winston Logger
+</p>
+
+---
+
+## What This Backend Handles
+
+- Multi-practice architecture
+- Owner → Admin → Supervisor → Therapist hierarchy
+- Patient management
+- Therapist session lifecycle + supervisor review flow
+- Role-based dashboards
+- Assignment system
+  - Therapist → Supervisor
+  - Patient → Therapist
+- Secure cookie-based authentication
+- Email flows (account created, reset, password change)
+- Field-level encryption for sensitive data
+- Strong validation + middleware architecture
+
+---
+
+## Project Structure
+
+Main backend lives inside **src/**
+
+```
+src
+├── config
+├── controllers
+├── db
+├── mail
+├── middleware
+├── routes
+├── script
+├── utils
+├── validations
+├── app.ts
+├── dev.ts
+└── handler.ts
+```
+
+Other important files:
+
+- `api.md` → endpoint reference
+- `serverless.yml` → deployment config
+
+---
+
+## Environment Variables
+
+Create `.env` in root:
+
+```
+DATABASE_URL=
+
+FIELD_ENCRYPTION_KEY=
+
+LOCAL_FRONTEND_URL=
+OWNER_FRONTEND_URL=
+USER_FRONTEND_URL=
+EMAIL_LOGO_URL=
+
+SUPPORT_EMAIL=
+TEST_EMAIL=
+
+SMTP_HOST=
+SMTP_PORT=
+SMTP_MAIL=
+SMTP_PASSWORD=
+
+OWNER_GENERATION_CODE=
+```
+
+---
+
+## Install
 
 ```
 npm install
 ```
 
-and then deploy with:
+---
+
+## Development
+
+### Fast Local Dev (recommended)
+
+Runs directly with Express (no Lambda).  
+Much faster locally — avoids Lambda cold start delay.
+
+```
+npm run dev:local
+```
+
+### Serverless Offline (Lambda simulation)
+
+Runs same as AWS Lambda locally.
+
+```
+npm run dev
+```
+
+---
+
+## Build
+
+```
+npm run build
+```
+
+---
+
+## Database (Drizzle)
+
+Generate migration:
+
+```
+npm run db:generate
+```
+
+Run migration:
+
+```
+npm run db:migrate
+```
+
+Open studio:
+
+```
+npm run db:studio
+```
+
+---
+
+## Email Testing
+
+```
+npm run test:email
+```
+
+---
+
+## Deployment
+
+Deploy to AWS Lambda:
 
 ```
 serverless deploy
 ```
 
-After running deploy, you should see output similar to:
+---
 
-```
-Deploying "aws-node-express-api" to stage "dev" (us-east-1)
+## Architecture Notes
 
-✔ Service deployed to stack aws-node-express-api-dev (96s)
-
-endpoint: ANY - https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com
-functions:
-  api: aws-node-express-api-dev-api (2.3 kB)
-```
-
-_Note_: In current form, after deployment, your API is public and can be invoked by anyone. For production deployments, you might want to configure an authorizer. For details on how to do that, refer to [`httpApi` event docs](https://www.serverless.com/framework/docs/providers/aws/events/http-api/).
-
-### Invocation
-
-After successful deployment, you can call the created application via HTTP:
-
-```
-curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/
-```
-
-Which should result in the following response:
-
-```json
-{ "message": "Hello from root!" }
-```
-
-### Local development
-
-The easiest way to develop and test your function is to use the `dev` command:
-
-```
-serverless dev
-```
-
-This will start a local emulator of AWS Lambda and tunnel your requests to and from AWS Lambda, allowing you to interact with your function as if it were running in the cloud.
-
-Now you can invoke the function as before, but this time the function will be executed locally. Now you can develop your function locally, invoke it, and see the results immediately without having to re-deploy.
-
-When you are done developing, don't forget to run `serverless deploy` to deploy the function to the cloud.
+- Cookie-based auth sessions stored in DB
+- AES-256 encryption for sensitive fields
+- Multi-practice scoped APIs via `x-practice-id`
+- Global users + practice role mapping
+- Soft delete system (`isDeleted`)
+- Central response utils (no raw res.json)
+- Zod validation on all write APIs
+- Winston logging for audit & debugging

@@ -141,17 +141,11 @@ req.practiceId
 
 # 📝 SESSIONS CORE (sessions.routes.ts)
 
-POST `/sessions/create` — createSession
-GET `/sessions/:sessionId` — getSessionById
-PUT `/sessions/:sessionId` — updateSession
-DELETE `/sessions/:sessionId` — deleteSession
+All session routes require:
 
-GET `/sessions/list` — getAllSessionsByPractice
-GET `/therapists/:therapistId/sessions` — getSessionsByTherapist
-GET `/patients/:patientId/sessions` — getSessionsByPatient
-
-GET `/patients/:patientId/sessions/history` — getPatientSessionHistory
-GET `/patients/:patientId/sessions/latest` — getLatestPatientSession
+```
+requireAuth + practiceContext
+```
 
 Uses:
 
@@ -161,21 +155,61 @@ req.practiceId
 
 ---
 
-# 📝 SESSION STATES
+## 🔹 SESSION CRUD
 
-GET `/sessions/draft/:therapistId` — getDraftSessionsByTherapist
-GET `/sessions/upcoming/:therapistId` — getUpcomingSessionsByTherapist
-GET `/sessions/pending-review/:supervisorId` — getPendingReviewSessions
+POST `/sessions/create` — createSession  
+Create a new therapy session
 
-PUT `/sessions/send-for-review/:sessionId` — sendSessionForReview
-PUT `/sessions/approve/:sessionId` — approveSession
-PUT `/sessions/reject/:sessionId` — rejectSession
+GET `/sessions/:sessionId` — getSessionById  
+Get single session by ID
 
-Uses:
+PUT `/sessions/:sessionId` — updateSession  
+Update session details
 
-```
-req.practiceId
-```
+DELETE `/sessions/:sessionId` — deleteSession  
+Delete a session
+
+---
+
+## 🔹 PATIENT SESSION APIs
+
+GET `/sessions/patient/:patientId/history` — getPatientSessionHistory  
+Get full session history for a patient
+
+GET `/sessions/patient/:patientId/latest` — getLatestPatientSession  
+Get latest session of a patient
+
+---
+
+## 🔹 THERAPIST SESSION STATES
+
+GET `/sessions/my-drafts` — getDraftSessionsByTherapist  
+Get all draft sessions of logged-in therapist
+
+GET `/sessions/my-upcoming` — getUpcomingSessionsByTherapist  
+Get upcoming sessions of logged-in therapist
+
+---
+
+## 🔹 SUPERVISOR REVIEW FLOW
+
+GET `/sessions/pending-review` — getPendingReviewSessions  
+Get sessions pending for supervisor review
+
+PUT `/sessions/send-for-review/:sessionId` — sendSessionForReview  
+Therapist sends session for supervisor review
+
+PUT `/sessions/approve/:sessionId` — approveSession  
+Supervisor approves session
+
+PUT `/sessions/reject/:sessionId` — rejectSession  
+Supervisor rejects session (with note)
+
+Validation used:
+
+- `createSessionSchema`
+- `updateSessionSchema`
+- `reviewSessionSchema`
 
 ---
 

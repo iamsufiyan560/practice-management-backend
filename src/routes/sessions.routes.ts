@@ -4,9 +4,6 @@ import {
   getSessionById,
   updateSession,
   deleteSession,
-  getAllSessionsByPractice,
-  getSessionsByTherapist,
-  getSessionsByPatient,
   getPatientSessionHistory,
   getLatestPatientSession,
   getDraftSessionsByTherapist,
@@ -16,27 +13,35 @@ import {
   approveSession,
   rejectSession,
 } from "../controllers/index.js";
+import { requireAuth, validate, practiceContext } from "../middleware/index.js";
+import {
+  createSessionSchema,
+  updateSessionSchema,
+  reviewSessionSchema,
+} from "../validations/index.js";
 
 const router = Router();
 
-router.post("/create", createSession);
-router.get("/:sessionId", getSessionById);
-router.put("/:sessionId", updateSession);
-router.delete("/:sessionId", deleteSession);
+router.use(requireAuth, practiceContext);
 
-router.get("/list", getAllSessionsByPractice);
-router.get("/therapist/:therapistId", getSessionsByTherapist);
-router.get("/patient/:patientId", getSessionsByPatient);
+router.post("/create", validate(createSessionSchema), createSession);
+router.get("/:sessionId", getSessionById);
+router.put("/:sessionId", validate(updateSessionSchema), updateSession);
+router.delete("/:sessionId", deleteSession);
 
 router.get("/patient/:patientId/history", getPatientSessionHistory);
 router.get("/patient/:patientId/latest", getLatestPatientSession);
 
-router.get("/draft/:therapistId", getDraftSessionsByTherapist);
-router.get("/upcoming/:therapistId", getUpcomingSessionsByTherapist);
-router.get("/pending-review/:supervisorId", getPendingReviewSessions);
+router.get("/my-drafts", getDraftSessionsByTherapist);
+router.get("/my-upcoming", getUpcomingSessionsByTherapist);
+router.get("/pending-review", getPendingReviewSessions);
 
 router.put("/send-for-review/:sessionId", sendSessionForReview);
-router.put("/approve/:sessionId", approveSession);
-router.put("/reject/:sessionId", rejectSession);
+router.put(
+  "/approve/:sessionId",
+  validate(reviewSessionSchema),
+  approveSession,
+);
+router.put("/reject/:sessionId", validate(reviewSessionSchema), rejectSession);
 
 export default router;

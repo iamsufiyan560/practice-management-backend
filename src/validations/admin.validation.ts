@@ -16,7 +16,5 @@ export const createAdminSchema = z.object({
 });
 
 export const updateAdminSchema = atLeastOne(
-  createAdminSchema.omit({ email: true }).partial().extend({
-    status: statusField.optional(),
-  }),
+  createAdminSchema.omit({ email: true }).partial(),
 );

@@ -27,8 +27,6 @@ export const userPracticeRoles = mysqlTable(
     createdBy: char("created_by", { length: 36 }),
     updatedBy: char("updated_by", { length: 36 }),
 
-    status: mysqlEnum("status", ["ACTIVE", "INACTIVE"]).default("ACTIVE"),
-
     isDeleted: boolean("is_deleted").default(false),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),

@@ -17,6 +17,15 @@ export const optionalEmailField = z
   .max(255)
   .optional();
 
+export const passwordField = z
+  .string({ error: "Password is required" })
+  .trim()
+  .min(8, "Password must be at least 8 characters")
+  .max(16, "Password must be less than 16 characters")
+  .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+  .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+  .regex(/[0-9]/, "Password");
+
 export const phoneField = nonEmptyString("Phone", 50);
 
 export const optionalPhoneField = z

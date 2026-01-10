@@ -9,7 +9,6 @@ import { logger } from "../config/index.js";
 export type AuthUser = {
   userId: string;
   email: string;
-  role: "ADMIN" | "SUPERVISOR" | "THERAPIST" | "OWNER";
 };
 
 declare global {
@@ -29,7 +28,9 @@ export async function requireAuth(
   try {
     const cookie = req.cookies?.auth;
 
-    logger.warn(`cookie - ${req.cookies?.auth.sessionId}`);
+    logger.warn("Auth cookie received", {
+      sessionId: req.cookies?.auth?.sessionId,
+    });
 
     if (!cookie?.sessionId) {
       return response.unauthorized(res, "Unauthorized");
@@ -56,7 +57,6 @@ export async function requireAuth(
     req.user = {
       userId: s.userId,
       email: s.email,
-      role: s.role as AuthUser["role"],
     };
 
     req.sessionId = s.id;

@@ -27,16 +27,6 @@ export const userLogin = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
-      logger.warn("User login attempt with missing credentials");
-      return response.badRequest(res, "Email and password are required");
-    }
-
-    if (password.length > 16) {
-      logger.warn("User login attempt with password exceeding length limit");
-      return response.badRequest(res, "Password must not exceed 16 characters");
-    }
-
     const [user] = await db
       .select()
       .from(users)
@@ -62,7 +52,7 @@ export const userLogin = async (req: Request, res: Response) => {
       .where(
         and(
           eq(userPracticeRoles.userId, user.id),
-          eq(userPracticeRoles.status, "ACTIVE"),
+          eq(userPracticeRoles.isDeleted, false),
         ),
       );
 
@@ -102,7 +92,6 @@ export const userLogin = async (req: Request, res: Response) => {
         practiceRoles: practiceRoles.map((pr) => ({
           practiceId: pr.practiceId,
           role: pr.role,
-          status: pr.status,
         })),
         createdAt: user.createdAt,
       },
@@ -140,7 +129,7 @@ export const getLoggedInUser = async (req: Request, res: Response) => {
       .where(
         and(
           eq(userPracticeRoles.userId, user.id),
-          eq(userPracticeRoles.status, "ACTIVE"),
+          eq(userPracticeRoles.isDeleted, false),
         ),
       );
 
@@ -152,7 +141,6 @@ export const getLoggedInUser = async (req: Request, res: Response) => {
       practiceRoles: practiceRoles.map((pr) => ({
         practiceId: pr.practiceId,
         role: pr.role,
-        status: pr.status,
       })),
       createdAt: user.createdAt,
     });
@@ -165,11 +153,6 @@ export const getLoggedInUser = async (req: Request, res: Response) => {
 export const userForgotPassword = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
-
-    if (!email) {
-      logger.warn("Forgot password called without email");
-      return response.badRequest(res, "Email is required");
-    }
 
     const [user] = await db
       .select()
@@ -228,14 +211,6 @@ export const userForgotPassword = async (req: Request, res: Response) => {
 export const userResetPassword = async (req: Request, res: Response) => {
   try {
     const { token, otp, newPassword } = req.body;
-
-    if (!token || !otp || !newPassword) {
-      logger.warn("Reset password called with missing fields");
-      return response.badRequest(
-        res,
-        "Token, OTP, and new password are required",
-      );
-    }
 
     const [resetRecord] = await db
       .select()
@@ -317,14 +292,6 @@ export const userChangePassword = async (req: Request, res: Response) => {
   try {
     const { currentPassword, newPassword } = req.body;
     const userId = req.user?.userId!;
-
-    if (!currentPassword || !newPassword) {
-      logger.warn("Change password called with missing fields");
-      return response.badRequest(
-        res,
-        "Current password and new password are required",
-      );
-    }
 
     const [user] = await db
       .select()

@@ -31,8 +31,6 @@ export const patients = mysqlTable(
     address: json("address"),
     emergencyContact: json("emergency_contact"),
 
-    status: mysqlEnum("status", ["ACTIVE", "INACTIVE"]).default("ACTIVE"),
-
     isDeleted: boolean("is_deleted").default(false),
     createdBy: char("created_by", { length: 36 }),
     updatedBy: char("updated_by", { length: 36 }),

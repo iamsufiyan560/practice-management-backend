@@ -16,7 +16,8 @@ response.notFound(res,msg?) → 404
 response.conflict(res,msg?) → 409  
 response.tooMany(res,msg?) → 429  
 response.error(res,msg?) → 500; ALWAYS use response utils no manual res.json
-requireAuth(req,res,next) → middleware reads auth cookie.sessionId verify in authSessions (not revoked & not expired) attach req.user{userId,email,role ADMIN|SUPERVISOR|THERAPIST|OWNER} and req.sessionId; else unauthorized
+requireAuth(req,res,next) → middleware reads auth cookie.sessionId verify in authSessions (not revoked & not expired) attach req.user{userId,email} and req.sessionId; else unauthorized
+requireRole(...roles) → middleware to verify logged-in user’s role within current practice using userId + practiceId; blocks access if user lacks required role(s); use after requireAuth and practiceContext for role-based route protection
 sendEmail({to,subject,html}) → async mail sender using SMTP templates; returns boolean/success; usually DO NOT block critical response if slow; use for account created/forgot/reset/changed notifications
 email templates generators → generateOwnerAccountCreatedEmail generateUserAccountCreatedEmail generateOwnerForgotPasswordEmail generateUserForgotPasswordEmail generateOwnerPasswordResetSuccessEmail generateUserPasswordResetSuccessEmail generateOwnerPasswordChangedEmail generateUserPasswordChangedEmail; userAddedToPracticeEmail pass required data and use html in sendEmail
 logger.warn(msg|msg,obj?) → warning logs missing fields/edge cases  

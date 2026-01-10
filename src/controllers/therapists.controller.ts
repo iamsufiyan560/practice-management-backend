@@ -101,7 +101,6 @@ export const createTherapist = async (req: Request, res: Response) => {
       email,
       phone,
       role: "THERAPIST",
-      status: "ACTIVE",
       createdBy,
       updatedBy: createdBy,
     });
@@ -179,7 +178,6 @@ export const createTherapist = async (req: Request, res: Response) => {
         lastName,
         phone,
         role: "THERAPIST",
-        status: "ACTIVE",
         practiceId,
       },
       "Therapist created successfully",
@@ -547,7 +545,6 @@ export const deleteTherapist = async (req: Request, res: Response) => {
           .update(userPracticeRoles)
           .set({
             isDeleted: true,
-            status: "INACTIVE",
             updatedBy,
           })
           .where(

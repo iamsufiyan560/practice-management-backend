@@ -29,11 +29,6 @@ export const generateFirstOwner = async (req: Request, res: Response) => {
   try {
     const { code, email, firstName, lastName } = req.body;
 
-    if (!code || !email || !firstName || !lastName) {
-      logger.warn("Generate first owner called with missing fields");
-      return response.badRequest(res, "All fields are required");
-    }
-
     if (code !== process.env.OWNER_GENERATION_CODE) {
       logger.warn("Generate first owner called with invalid code");
       return response.unauthorized(res, "Invalid generation code");
@@ -157,16 +152,6 @@ export const createOwner = async (req: Request, res: Response) => {
 export const ownerLogin = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      logger.warn("Owner login attempt with missing credentials");
-      return response.badRequest(res, "Email and password are required");
-    }
-
-    if (password.length > 16) {
-      logger.warn("Owner login attempt with password exceeding length limit");
-      return response.badRequest(res, "Password must not exceed 16 characters");
-    }
 
     const [owner] = await db
       .select()
@@ -426,11 +411,6 @@ export const ownerForgotPassword = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
 
-    if (!email) {
-      logger.warn("Forgot password called without email");
-      return response.badRequest(res, "Email is required");
-    }
-
     const [owner] = await db
       .select()
       .from(owners)
@@ -489,14 +469,6 @@ export const ownerForgotPassword = async (req: Request, res: Response) => {
 export const ownerResetPassword = async (req: Request, res: Response) => {
   try {
     const { token, otp, newPassword } = req.body;
-
-    if (!token || !otp || !newPassword) {
-      logger.warn("Reset password called with missing fields");
-      return response.badRequest(
-        res,
-        "Token, OTP, and new password are required",
-      );
-    }
 
     const [resetRecord] = await db
       .select()
@@ -581,14 +553,6 @@ export const ownerChangePassword = async (req: Request, res: Response) => {
   try {
     const { currentPassword, newPassword } = req.body;
     const userId = req.user?.userId!;
-
-    if (!currentPassword || !newPassword) {
-      logger.warn("Change password called with missing fields");
-      return response.badRequest(
-        res,
-        "Current password and new password are required",
-      );
-    }
 
     const [owner] = await db
       .select()

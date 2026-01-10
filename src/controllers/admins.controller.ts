@@ -90,7 +90,6 @@ export const createAdmin = async (req: Request, res: Response) => {
       email,
       phone,
       role: "ADMIN",
-      status: "ACTIVE",
       createdBy,
       updatedBy: createdBy,
     });
@@ -154,7 +153,6 @@ export const createAdmin = async (req: Request, res: Response) => {
         lastName,
         phone,
         role: "ADMIN",
-        status: "ACTIVE",
         practiceId,
       },
       "Admin created successfully",
@@ -171,7 +169,7 @@ export const updateAdmin = async (req: Request, res: Response) => {
   try {
     const practiceId = req.practiceId!;
     const idParam = req.params.adminId;
-    const { firstName, lastName, phone, status } = req.body;
+    const { firstName, lastName, phone } = req.body;
     const updatedBy = req.user?.userId!;
 
     const adminId = Array.isArray(idParam) ? idParam[0] : idParam;
@@ -205,7 +203,6 @@ export const updateAdmin = async (req: Request, res: Response) => {
         firstName: firstName ?? existingAdmin.firstName,
         lastName: lastName ?? existingAdmin.lastName,
         phone: phone ?? existingAdmin.phone,
-        status: status ?? existingAdmin.status,
         updatedBy,
       })
       .where(
@@ -263,7 +260,6 @@ export const deleteAdmin = async (req: Request, res: Response) => {
       .update(userPracticeRoles)
       .set({
         isDeleted: true,
-        status: "INACTIVE",
         updatedBy,
       })
       .where(
@@ -299,7 +295,6 @@ export const getAllAdminsByPractice = async (req: Request, res: Response) => {
         email: userPracticeRoles.email,
 
         role: userPracticeRoles.role,
-        status: userPracticeRoles.status,
         createdAt: userPracticeRoles.createdAt,
       })
       .from(userPracticeRoles)
@@ -307,7 +302,6 @@ export const getAllAdminsByPractice = async (req: Request, res: Response) => {
         and(
           eq(userPracticeRoles.practiceId, practiceId),
           eq(userPracticeRoles.role, "ADMIN"),
-          eq(userPracticeRoles.status, "ACTIVE"),
           eq(userPracticeRoles.isDeleted, false),
         ),
       );
@@ -349,7 +343,6 @@ export const getAdminById = async (req: Request, res: Response) => {
         phone: userPracticeRoles.phone,
 
         role: userPracticeRoles.role,
-        status: userPracticeRoles.status,
         createdAt: userPracticeRoles.createdAt,
       })
       .from(userPracticeRoles)
@@ -358,7 +351,6 @@ export const getAdminById = async (req: Request, res: Response) => {
           eq(userPracticeRoles.userId, adminId),
           eq(userPracticeRoles.practiceId, practiceId),
           eq(userPracticeRoles.role, "ADMIN"),
-          eq(userPracticeRoles.status, "ACTIVE"),
           eq(userPracticeRoles.isDeleted, false),
         ),
       )
@@ -396,7 +388,6 @@ export const getAllInactiveAdminsByPractice = async (
         phone: userPracticeRoles.phone,
 
         role: userPracticeRoles.role,
-        status: userPracticeRoles.status,
         isDeleted: userPracticeRoles.isDeleted,
         createdAt: userPracticeRoles.createdAt,
         updatedAt: userPracticeRoles.updatedAt,
@@ -406,10 +397,7 @@ export const getAllInactiveAdminsByPractice = async (
         and(
           eq(userPracticeRoles.practiceId, practiceId),
           eq(userPracticeRoles.role, "ADMIN"),
-          or(
-            eq(userPracticeRoles.status, "INACTIVE"),
-            eq(userPracticeRoles.isDeleted, true),
-          ),
+          or(eq(userPracticeRoles.isDeleted, true)),
         ),
       );
 

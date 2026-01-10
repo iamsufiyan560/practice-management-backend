@@ -1,14 +1,13 @@
 import crypto from "crypto";
 
 type OtpOptions = {
-  otpLength?: number; // default 6
   otpExpiryMinutes?: number; // default 15
   tokenExpiryMinutes?: number; // default 60
   sessionExpiryDays?: number; // default 7
 };
 
 export function generateOtpBundle(options: OtpOptions = {}) {
-  const otpLength = options.otpLength ?? 6;
+  const otpLength = 6;
   const otpExpiryMinutes = options.otpExpiryMinutes ?? 15;
   const tokenExpiryMinutes = options.tokenExpiryMinutes ?? 60;
   const sessionExpiryDays = options.sessionExpiryDays ?? 7;

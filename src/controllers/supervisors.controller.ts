@@ -100,7 +100,6 @@ export const createSupervisor = async (req: Request, res: Response) => {
       email,
       phone,
       role: "SUPERVISOR",
-      status: "ACTIVE",
       createdBy,
       updatedBy: createdBy,
     });
@@ -178,7 +177,6 @@ export const createSupervisor = async (req: Request, res: Response) => {
         lastName,
         phone,
         role: "SUPERVISOR",
-        status: "ACTIVE",
         practiceId,
       },
       "Supervisor created successfully",
@@ -478,7 +476,6 @@ export const deleteSupervisor = async (req: Request, res: Response) => {
           .update(userPracticeRoles)
           .set({
             isDeleted: true,
-            status: "INACTIVE",
             updatedBy,
           })
           .where(

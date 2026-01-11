@@ -6,8 +6,11 @@ import {
   updatePractice,
   deletePractice,
 } from "../controllers/index.js";
+import { requireAuth } from "../middleware/index.js";
 
 const router = Router();
+
+router.use(requireAuth);
 
 router.post("/create", createPractice);
 router.get("/list", getAllPractices);

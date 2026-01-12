@@ -216,7 +216,6 @@ export const getAllTherapistsByPractice = async (
         ),
       );
 
-    const therapistIds = therapistList.map((t) => t.userId);
     const patientCounts = await db
       .select({
         therapistId: patients.therapistId,
@@ -612,7 +611,6 @@ export const getAllInactiveTherapistsByPractice = async (
         ),
       );
 
-    const therapistIds = inactiveList.map((t) => t.userId);
     const patientCounts = await db
       .select({
         therapistId: patients.therapistId,

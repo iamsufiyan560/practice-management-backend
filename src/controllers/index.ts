@@ -1,6 +1,5 @@
 export * from "./owner.controller.js";
 export * from "./auth.controller.js";
-export * from "./users.controller.js";
 export * from "./practices.controller.js";
 export * from "./admins.controller.js";
 export * from "./supervisors.controller.js";

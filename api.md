@@ -43,14 +43,6 @@ PUT `/auth/change-password` — userChangePassword
 
 ---
 
-# 👤 USER PROFILE (users.routes.ts)
-
-GET `/users/:userId` — getUserProfile
-PUT `/users/:userId` — updateUserProfile
-DELETE `/users/:userId` — deleteUserProfile
-
----
-
 # 🏥 PRACTICES (practices.routes.ts)
 
 POST `/practices/create` — createPractice

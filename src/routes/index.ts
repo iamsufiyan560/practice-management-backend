@@ -2,7 +2,6 @@ import { Router } from "express";
 
 import ownerRoutes from "./owner.routes.js";
 import authRoutes from "./auth.routes.js";
-import usersRoutes from "./users.routes.js";
 import practicesRoutes from "./practices.routes.js";
 import adminsRoutes from "./admins.routes.js";
 import supervisorsRoutes from "./supervisors.routes.js";
@@ -16,7 +15,6 @@ const router = Router();
 
 router.use("/owner", ownerRoutes);
 router.use("/auth", authRoutes);
-router.use("/users", usersRoutes);
 router.use("/practices", practicesRoutes);
 router.use("/admins", adminsRoutes);
 router.use("/supervisors", supervisorsRoutes);

@@ -18,7 +18,7 @@ export const patients = mysqlTable(
       .$defaultFn(() => crypto.randomUUID()),
 
     practiceId: char("practice_id", { length: 36 }).notNull(),
-    therapistId: char("therapist_id", { length: 36 }).notNull(),
+    therapistId: char("therapist_id", { length: 36 }),
 
     firstName: varchar("first_name", { length: 100 }),
     lastName: varchar("last_name", { length: 100 }),

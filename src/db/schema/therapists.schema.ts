@@ -20,7 +20,7 @@ export const therapists = mysqlTable(
     userId: char("user_id", { length: 36 }).notNull(),
     practiceId: char("practice_id", { length: 36 }).notNull(),
 
-    supervisorId: char("supervisor_id", { length: 36 }).notNull(),
+    supervisorId: char("supervisor_id", { length: 36 }),
 
     email: varchar("email", { length: 255 }).notNull(),
     firstName: varchar("first_name", { length: 100 }),

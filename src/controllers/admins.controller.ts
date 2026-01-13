@@ -47,22 +47,26 @@ export const createAdmin = async (req: Request, res: Response) => {
       userId = existingUser.id;
 
       // check admin already exists in this practice
-      const [existingAdmin] = await db
+      const [existingRole] = await db
         .select()
         .from(userPracticeRoles)
         .where(
           and(
             eq(userPracticeRoles.userId, userId),
             eq(userPracticeRoles.practiceId, practiceId),
-            eq(userPracticeRoles.role, "ADMIN"),
             eq(userPracticeRoles.isDeleted, false),
           ),
         )
         .limit(1);
 
-      if (existingAdmin) {
-        logger.warn(`Admin already exists for practice - ${email}`);
-        return response.conflict(res, "Admin already exists for this practice");
+      if (existingRole) {
+        logger.warn(
+          `User already exists in this practice with role ${existingRole.role}`,
+        );
+        return response.conflict(
+          res,
+          `User already exists in this practice as ${existingRole.role}`,
+        );
       }
     } else {
       //  create global user

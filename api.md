@@ -104,6 +104,7 @@ DELETE `/therapists/:therapistId` — deleteTherapist
 
 GET `/therapists/list` — getAllTherapistsByPractice
 GET `/therapists/:therapistId` — getTherapistById
+GET `/therapists/inactive` — getAllInactiveTherapistsByPractice
 
 Uses:
 

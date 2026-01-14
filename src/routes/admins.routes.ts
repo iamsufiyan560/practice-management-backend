@@ -5,6 +5,7 @@ import {
   deleteAdmin,
   getAllAdminsByPractice,
   getAdminById,
+  getAllInactiveAdminsByPractice,
 } from "../controllers/index.js";
 import { practiceContext, requireAuth } from "../middleware/index.js";
 
@@ -17,7 +18,11 @@ router.delete("/:adminId", practiceContext, requireAuth, deleteAdmin);
 router.get("/list", practiceContext, requireAuth, getAllAdminsByPractice);
 router.get("/:adminId", practiceContext, requireAuth, getAdminById);
 
-// TODO: Add route for inactive admins
-// router.get("/admins/inactive", practiceContext, requireAuth, getAllInactiveAdminsByPractice);
+router.get(
+  "/inactive",
+  practiceContext,
+  requireAuth,
+  getAllInactiveAdminsByPractice,
+);
 
 export default router;

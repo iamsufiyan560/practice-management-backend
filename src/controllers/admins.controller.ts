@@ -1,16 +1,20 @@
 import { Request, Response } from "express";
-import { eq, and } from "drizzle-orm";
+import { eq, and, or } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { users } from "../db/schema/users.schema.js";
 import { userPracticeRoles } from "../db/schema/user-practice-roles.schema.js";
 import { sendEmail } from "../mail/send-mail.js";
-import { generateUserAccountCreatedEmail } from "../mail/templates/index.js";
+import {
+  generateUserAccountCreatedEmail,
+  userAddedToPracticeEmail,
+} from "../mail/templates/index.js";
 import { logger } from "../config/index.js";
 import {
   response,
   hashPassword,
   generateSecurePassword,
 } from "../utils/index.js";
+import { practices } from "../db/schema/practices.schema.js";
 
 // create admin for practise
 
@@ -61,7 +65,7 @@ export const createAdmin = async (req: Request, res: Response) => {
         return response.conflict(res, "Admin already exists for this practice");
       }
     } else {
-      // 🆕 create global user
+      //  create global user
       generatedPassword = generateSecurePassword();
       const passwordHash = await hashPassword(generatedPassword);
 
@@ -110,9 +114,38 @@ export const createAdmin = async (req: Request, res: Response) => {
       }).catch((err) => {
         logger.error("Admin email send failed", { error: err });
       });
-    }
+    } else {
+      (async () => {
+        try {
+          // fetch practice name
+          const [practice] = await db
+            .select({ name: practices.name })
+            .from(practices)
+            .where(eq(practices.id, practiceId))
+            .limit(1);
 
-    // TODO: send "added to practice" email if existing user is assigned as admin to a new practice (different from account creation email)
+          const practiceName = practice?.name ?? "Journi Practice";
+
+          const emailHtml = userAddedToPracticeEmail({
+            email,
+            firstName,
+            practiceName,
+            role: "ADMIN",
+            addedAt: new Date(),
+          });
+
+          await sendEmail({
+            to: email,
+            subject: "You’ve been added to a practice",
+            html: emailHtml,
+          });
+
+          logger.info("Added-to-practice email sent", { email, practiceId });
+        } catch (err) {
+          logger.error("Added-to-practice email failed", { error: err });
+        }
+      })();
+    }
 
     logger.info(`Admin created - ${email} for practice ${practiceId}`);
 
@@ -359,8 +392,6 @@ export const getAdminById = async (req: Request, res: Response) => {
   }
 };
 
-// get all inactive admin by practise id
-// TODO: Implement logic to fetch inactive admins (status=INACTIVE or isDeleted=true)
 export const getAllInactiveAdminsByPractice = async (
   req: Request,
   res: Response,
@@ -368,11 +399,39 @@ export const getAllInactiveAdminsByPractice = async (
   try {
     const practiceId = req.practiceId!;
 
-    // TODO: Query userPracticeRoles where status=INACTIVE or isDeleted=true
+    const inactiveAdmins = await db
+      .select({
+        userId: userPracticeRoles.userId,
+        practiceId: userPracticeRoles.practiceId,
 
-    logger.info(`Retrieved inactive admins for practice ${practiceId}`);
+        email: userPracticeRoles.email,
+        firstName: userPracticeRoles.firstName,
+        lastName: userPracticeRoles.lastName,
+        phone: userPracticeRoles.phone,
 
-    return response.ok(res, []);
+        role: userPracticeRoles.role,
+        status: userPracticeRoles.status,
+        isDeleted: userPracticeRoles.isDeleted,
+        createdAt: userPracticeRoles.createdAt,
+        updatedAt: userPracticeRoles.updatedAt,
+      })
+      .from(userPracticeRoles)
+      .where(
+        and(
+          eq(userPracticeRoles.practiceId, practiceId),
+          eq(userPracticeRoles.role, "ADMIN"),
+          or(
+            eq(userPracticeRoles.status, "INACTIVE"),
+            eq(userPracticeRoles.isDeleted, true),
+          ),
+        ),
+      );
+
+    logger.info(
+      `Retrieved ${inactiveAdmins.length} inactive admins for practice ${practiceId}`,
+    );
+
+    return response.ok(res, inactiveAdmins);
   } catch (err) {
     logger.error("Get all inactive admins error", { error: err });
     return response.error(res, "Failed to fetch inactive admins");

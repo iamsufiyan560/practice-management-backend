@@ -20,6 +20,7 @@ import {
   response,
   setAuthCookie,
   logoutUser,
+  generateOtpBundle,
 } from "../utils/index.js";
 
 export const userLogin = async (req: Request, res: Response) => {
@@ -74,7 +75,7 @@ export const userLogin = async (req: Request, res: Response) => {
     }
 
     const sessionId = crypto.randomUUID();
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+    const { expiresAt } = generateOtpBundle(); // 7 days
 
     await db.insert(authSessions).values({
       id: sessionId,
@@ -185,10 +186,7 @@ export const userForgotPassword = async (req: Request, res: Response) => {
       );
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const token = crypto.randomUUID();
-    const otpExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
-    const tokenExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+    const { otp, token, otpExpiry, tokenExpiry } = generateOtpBundle();
 
     await db.insert(passwordResets).values({
       userId: user.id,

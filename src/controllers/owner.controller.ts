@@ -22,8 +22,9 @@ import {
   setAuthCookie,
   logoutUser,
   generateSecurePassword,
+  generateOtpBundle,
 } from "../utils/index.js";
-// Fire and forget - don't await
+
 export const generateFirstOwner = async (req: Request, res: Response) => {
   try {
     const { code, email, firstName, lastName } = req.body;
@@ -194,7 +195,7 @@ export const ownerLogin = async (req: Request, res: Response) => {
     }
 
     const sessionId = crypto.randomUUID();
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+    const { expiresAt } = generateOtpBundle(); // 7 days
 
     await db.insert(authSessions).values({
       id: sessionId,
@@ -307,22 +308,20 @@ export const getOwnerProfile = async (req: Request, res: Response) => {
   }
 };
 
+// update owner profile
 export const updateOwnerProfile = async (req: Request, res: Response) => {
   try {
-    const { ownerId } = req.params;
+    const ownerIdParam = req.params.ownerId;
     const { firstName, lastName } = req.body;
-    const userId = req.user?.userId!;
+    const updatedBy = req.user?.userId!;
+
+    const ownerId = Array.isArray(ownerIdParam)
+      ? ownerIdParam[0]
+      : ownerIdParam;
 
     if (!ownerId) {
       logger.warn("Update owner profile called without ownerId");
       return response.badRequest(res, "Owner ID is required");
-    }
-
-    if (userId !== ownerId) {
-      logger.warn(
-        `Unauthorized update attempt - user: ${userId}, target: ${ownerId}`,
-      );
-      return response.forbidden(res, "Cannot update another owner's profile");
     }
 
     const [owner] = await db
@@ -341,7 +340,7 @@ export const updateOwnerProfile = async (req: Request, res: Response) => {
       .set({
         firstName: firstName ?? owner.firstName,
         lastName: lastName ?? owner.lastName,
-        updatedBy: ownerId,
+        updatedBy,
       })
       .where(eq(owners.id, ownerId));
 
@@ -354,22 +353,19 @@ export const updateOwnerProfile = async (req: Request, res: Response) => {
   }
 };
 
-// Delete Profile
+// delete owner profile
 export const deleteOwnerProfile = async (req: Request, res: Response) => {
   try {
-    const { ownerId } = req.params;
-    const userId = req.user?.userId!;
+    const ownerIdParam = req.params.ownerId;
+    const updatedBy = req.user?.userId!;
+
+    const ownerId = Array.isArray(ownerIdParam)
+      ? ownerIdParam[0]
+      : ownerIdParam;
 
     if (!ownerId) {
       logger.warn("Delete owner profile called without ownerId");
       return response.badRequest(res, "Owner ID is required");
-    }
-
-    if (userId !== ownerId) {
-      logger.warn(
-        `Unauthorized delete attempt - user: ${userId}, target: ${ownerId}`,
-      );
-      return response.forbidden(res, "Cannot delete another owner's profile");
     }
 
     const [owner] = await db
@@ -387,10 +383,11 @@ export const deleteOwnerProfile = async (req: Request, res: Response) => {
       .update(owners)
       .set({
         isDeleted: true,
-        updatedBy: ownerId,
+        updatedBy,
       })
       .where(eq(owners.id, ownerId));
 
+    // revoke all sessions of this owner
     await db
       .update(authSessions)
       .set({ isRevoked: true })
@@ -457,10 +454,7 @@ export const ownerForgotPassword = async (req: Request, res: Response) => {
       );
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const token = crypto.randomUUID();
-    const otpExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
-    const tokenExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+    const { otp, token, otpExpiry, tokenExpiry } = generateOtpBundle();
 
     await db.insert(passwordResets).values({
       userId: owner.id,

@@ -2,7 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { globalIpLimiter, practiceContext } from "./middleware/index.js";
+import { globalIpLimiter } from "./middleware/index.js";
 import { httpLogger } from "./config/index.js";
 import routes from "./routes/index.js";
 
@@ -33,7 +33,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(globalIpLimiter);
-app.use(practiceContext);
 
 app.get("/", (_req, res) => {
   res.json({ status: "ok" });

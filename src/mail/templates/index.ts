@@ -6,3 +6,4 @@ export * from "./ownerPasswordResetSuccess.js";
 export * from "./userPasswordResetSuccess.js";
 export * from "./ownerPasswordChanged.js";
 export * from "./userPasswordChanged.js";
+export * from "./userAddedToPracticeEmail.js";

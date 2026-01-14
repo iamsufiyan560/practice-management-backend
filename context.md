@@ -18,7 +18,7 @@ response.tooMany(res,msg?) → 429
 response.error(res,msg?) → 500; ALWAYS use response utils no manual res.json
 requireAuth(req,res,next) → middleware reads auth cookie.sessionId verify in authSessions (not revoked & not expired) attach req.user{userId,email,role ADMIN|SUPERVISOR|THERAPIST|OWNER} and req.sessionId; else unauthorized
 sendEmail({to,subject,html}) → async mail sender using SMTP templates; returns boolean/success; usually DO NOT block critical response if slow; use for account created/forgot/reset/changed notifications
-email templates generators → generateOwnerAccountCreatedEmail generateUserAccountCreatedEmail generateOwnerForgotPasswordEmail generateUserForgotPasswordEmail generateOwnerPasswordResetSuccessEmail generateUserPasswordResetSuccessEmail generateOwnerPasswordChangedEmail generateUserPasswordChangedEmail; pass required data and use html in sendEmail
+email templates generators → generateOwnerAccountCreatedEmail generateUserAccountCreatedEmail generateOwnerForgotPasswordEmail generateUserForgotPasswordEmail generateOwnerPasswordResetSuccessEmail generateUserPasswordResetSuccessEmail generateOwnerPasswordChangedEmail generateUserPasswordChangedEmail; userAddedToPracticeEmail pass required data and use html in sendEmail
 logger.warn(msg|msg,obj?) → warning logs missing fields/edge cases  
 logger.info(msg|msg,obj?) → info logs login/email/db events  
 logger.error(msg|msg,obj?) → error logs  
@@ -39,3 +39,10 @@ IMPORT RULE→ Always import using relative ../ path and MUST end with .js exten
 REQUEST USER RULE → When requireAuth middleware used get logged user via req.user?.userId! req.user?.email! req.user?.role! always use ?. and ! together to avoid TS null error
 practiceContext middleware → reads x-practice-id header and attaches req.practiceId for multi-practice APIs; use in routes needing practice scope; access via req.practiceId!
 DATE RULE → always use new Date() (JS server time) for all date compare/store (expiry, createdAt, updatedAt, token checks, session checks) keep backend as single source of time consistency across all tables
+USER ARCH RULE → users table is global auth only; every created user must always be inserted into userPracticeRoles (practice scoped profile + role) and then based on role also insert into therapists/supervisors tables; always keep data in sync when updating/deleting any user role  
+PRACTICE CONTEXT RULE → whenever API is practice-scoped must use practiceContext middleware and access practiceId via const practiceId = req.practiceId!; always filter queries by practiceId + isDeleted=false
+CONSISTENCY RULE → whenever creating/updating/deleting any user role always update userPracticeRoles first then role tables (therapists/supervisors) to keep data in sync  
+UNIQUE ROLE RULE → before inserting into userPracticeRoles always check (userId + practiceId + role) to prevent duplicate role in same practice  
+SESSION REVOKE RULE → if user role is removed from a practice or set INACTIVE optionally revoke their sessions if access must stop immediately  
+OFT DELETE RULE → any table with isDeleted must always filter isDeleted=false in all select/update queries and never hard delete role data  
+MULTI PRACTICE RULE → same user can exist in multiple practices with different roles; always check existing user globally by email then only create role entry per practice (never duplicate global user)

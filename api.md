@@ -8,7 +8,7 @@ Base URL: `/api/v1`
 
 ### Auth
 
-POST `generate-first-owner` - Generate First owner
+POST `/owner/generate-first-owner` - Generate First owner
 POST `/owner/login` — ownerLogin
 POST `/owner/logout` — ownerLogout
 GET `/owner/me` — getOwnerMe
@@ -69,6 +69,7 @@ DELETE `/admins/:adminId` — deleteAdmin
 
 GET `/admins/list` — getAllAdminsByPractice
 GET `/admins/:adminId` — getAdminById
+GET `/admins/inactive` — get all inactive admin
 
 Uses:
 

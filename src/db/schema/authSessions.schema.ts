@@ -5,6 +5,7 @@ import {
   timestamp,
   boolean,
   index,
+  mysqlEnum,
 } from "drizzle-orm/mysql-core";
 
 export const authSessions = mysqlTable(
@@ -14,7 +15,8 @@ export const authSessions = mysqlTable(
 
     userId: char("user_id", { length: 36 }).notNull(),
     email: varchar("email", { length: 255 }).notNull(),
-    role: varchar("role", { length: 20 }).notNull(),
+
+    role: mysqlEnum("session_role", ["OWNER", "USER"]).notNull(),
 
     ipAddress: varchar("ip_address", { length: 100 }),
     userAgent: varchar("user_agent", { length: 500 }),

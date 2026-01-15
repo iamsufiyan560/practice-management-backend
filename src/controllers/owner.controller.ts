@@ -200,7 +200,7 @@ export const ownerLogin = async (req: Request, res: Response) => {
       id: sessionId,
       userId: owner.id,
       email: owner.email,
-      role: "owner",
+      role: "OWNER",
       ipAddress: req.ip,
       userAgent: req.headers["user-agent"],
       device: req.headers["user-agent"],

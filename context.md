@@ -23,7 +23,7 @@ logger.warn(msg|msg,obj?) → warning logs missing fields/edge cases
 logger.info(msg|msg,obj?) → info logs login/email/db events  
 logger.error(msg|msg,obj?) → error logs  
 logger supports multiple params + metadata object and writes console + files; use across controllers/services for audit/debug
-TABLES --> authSessions: id,userId,email,role,ipAddress,userAgent,device,expiresAt,lastActivityAt,isRevoked,createdAt  
+TABLES --> authSessions: id,userId,email,role(USER,OWNER),ipAddress,userAgent,device,expiresAt,lastActivityAt,isRevoked,createdAt  
 owners: id,email,passwordHash,firstName,lastName,createdBy,updatedBy,isDeleted,createdAt,updatedAt  
 users: id,email,passwordHash,createdAt,updatedAt
 passwordResets: id,userId,email,otp,otpType(FORGOT_PASSWORD|CHANGE_PASSWORD),otpExpiry,token,tokenExpiry,isUsed,createdAt
@@ -38,3 +38,4 @@ GLOBAL RULES → always try/catch controllers; always use response.\* utils; use
 IMPORT RULE→ Always import using relative ../ path and MUST end with .js extension (example: import { db } from "../db/index.js")
 REQUEST USER RULE → When requireAuth middleware used get logged user via req.user?.userId! req.user?.email! req.user?.role! always use ?. and ! together to avoid TS null error
 practiceContext middleware → reads x-practice-id header and attaches req.practiceId for multi-practice APIs; use in routes needing practice scope; access via req.practiceId!
+DATE RULE → always use new Date() (JS server time) for all date compare/store (expiry, createdAt, updatedAt, token checks, session checks) keep backend as single source of time consistency across all tables

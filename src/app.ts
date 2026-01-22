@@ -7,22 +7,14 @@ import { httpLogger, logger } from "./config";
 import routes from "./routes";
 
 const app = express();
-const FRONTEND_URL = process.env.FRONTEND_URL!;
-
-logger.info("Bootstrapping EventForge API", {
-  nodeVersion: process.version,
-  environment: process.env.NODE_ENV || "development",
-  frontendUrl: FRONTEND_URL ?? "NOT_SET",
-});
-
-if (!FRONTEND_URL) {
-  logger.error("FRONTEND_URL is not set in environment variables");
-  throw new Error("FRONTEND_URL is not set in .env file");
-}
 
 app.use(
   cors({
-    origin: [FRONTEND_URL],
+    origin: [
+      process.env.LOCAL_FRONTEND_URL!,
+      process.env.OWNER_FRONTEND_URL!,
+      process.env.USER_FRONTEND_URL!,
+    ].filter(Boolean),
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   }),

@@ -2,24 +2,6 @@
 
 Base URL: `/api/v1`
 
-# ROUTE FILE STRUCTURE
-
-Use separate route files:
-
-owner.routes.ts
-auth.routes.ts
-users.routes.ts
-practices.routes.ts
-admins.routes.ts
-supervisors.routes.ts
-therapists.routes.ts
-patients.routes.ts
-sessions.routes.ts
-assignments.routes.ts
-dashboard.routes.ts
-
-Each must have matching controller file.
-
 ---
 
 # 🔐 OWNER ROUTES (owner.routes.ts)

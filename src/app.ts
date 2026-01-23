@@ -4,6 +4,7 @@ import cors from "cors";
 
 import { globalIpLimiter, practiceContext } from "./middleware";
 import { httpLogger, logger } from "./config";
+import routes from "./routes";
 
 const app = express();
 const FRONTEND_URL = process.env.FRONTEND_URL!;
@@ -38,5 +39,7 @@ app.use(practiceContext);
 app.get("/", (_req, res) => {
   res.json({ status: "ok" });
 });
+
+app.use("/api/v1", routes);
 
 export default app;

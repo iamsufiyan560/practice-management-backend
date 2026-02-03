@@ -16,7 +16,12 @@ export const authSessions = mysqlTable(
     email: varchar("email", { length: 255 }).notNull(),
     role: varchar("role", { length: 20 }).notNull(),
 
+    ipAddress: varchar("ip_address", { length: 100 }),
+    userAgent: varchar("user_agent", { length: 500 }),
+    device: varchar("device", { length: 255 }),
+
     expiresAt: timestamp("expires_at").notNull(),
+    lastActivityAt: timestamp("last_activity_at"),
 
     isRevoked: boolean("is_revoked").default(false),
 

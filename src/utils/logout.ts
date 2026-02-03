@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { authSessions } from "@/db/schema";
 import { db } from "@/db";
 import { clearAuthCookie } from "@/utils/cookie";
+import { response } from "@/utils/response";
 
 export async function logoutUser(req: Request, res: Response) {
   try {
@@ -10,7 +11,7 @@ export async function logoutUser(req: Request, res: Response) {
 
     if (!sessionId) {
       clearAuthCookie(res);
-      return res.status(200).json({ success: true });
+      return response.ok(res, null, "Logged out");
     }
 
     await db
@@ -20,12 +21,9 @@ export async function logoutUser(req: Request, res: Response) {
 
     clearAuthCookie(res);
 
-    return res.status(200).json({
-      success: true,
-      message: "Logged out successfully",
-    });
+    return response.ok(res, null, "Logged out successfully");
   } catch (err) {
     clearAuthCookie(res);
-    return res.status(200).json({ success: true });
+    return response.ok(res, null, "Logged out");
   }
 }

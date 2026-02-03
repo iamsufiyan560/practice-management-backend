@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { eq, and, gt } from "drizzle-orm";
 import { db } from "@/db";
 import { authSessions } from "@/db/schema";
+import { eq, and, gt } from "drizzle-orm";
+import { response } from "@/utils/response";
 
 export type AuthUser = {
   userId: string;
@@ -25,8 +26,9 @@ export async function requireAuth(
 ) {
   try {
     const cookie = req.cookies?.auth;
+
     if (!cookie?.sessionId) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return response.unauthorized(res, "Unauthorized");
     }
 
     const session = await db
@@ -42,7 +44,7 @@ export async function requireAuth(
       .limit(1);
 
     if (!session.length) {
-      return res.status(401).json({ message: "Session expired" });
+      return response.unauthorized(res, "Session expired");
     }
 
     const s = session[0]!;
@@ -56,7 +58,7 @@ export async function requireAuth(
     req.sessionId = s.id;
 
     next();
-  } catch (err) {
-    return res.status(401).json({ message: "Unauthorized" });
+  } catch {
+    return response.unauthorized(res, "Unauthorized");
   }
 }

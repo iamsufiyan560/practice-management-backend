@@ -6,3 +6,4 @@ export * from "./therapists.schema";
 export * from "./patients.schema";
 export * from "./patientSessions.schema";
 export * from "./authSessions.schema";
+export * from "./passwordResets.schema";

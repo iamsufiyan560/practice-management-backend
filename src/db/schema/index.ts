@@ -5,3 +5,4 @@ export * from "./supervisors.schema";
 export * from "./therapists.schema";
 export * from "./patients.schema";
 export * from "./patientSessions.schema";
+export * from "./authSessions.schema";

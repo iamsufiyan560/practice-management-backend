@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { db } from "@/db";
 import { authSessions } from "@/db/schema";
 import { eq, and, gt } from "drizzle-orm";
-import { response } from "@/utils/response";
+import { response } from "@/utils";
 
 export type AuthUser = {
   userId: string;

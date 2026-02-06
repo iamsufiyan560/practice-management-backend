@@ -2,135 +2,213 @@
 
 Base URL: `/api/v1`
 
----
+# ROUTE FILE STRUCTURE
 
-# 🔐 AUTH — OWNER
+Use separate route files:
 
-POST /api/v1/owner/login  
-POST /api/v1/owner/logout
+owner.routes.ts
+auth.routes.ts
+users.routes.ts
+practices.routes.ts
+admins.routes.ts
+supervisors.routes.ts
+therapists.routes.ts
+patients.routes.ts
+sessions.routes.ts
+assignments.routes.ts
+dashboard.routes.ts
 
-GET /api/v1/owner/me
-
-GET /api/v1/owner/:ownerId # single owner  
-PUT /api/v1/owner/:ownerId # update owner  
-DELETE /api/v1/owner/:ownerId # delete owner
-
----
-
-# 🔐 AUTH — USERS (ADMIN / SUP / THERAPIST)
-
-POST /api/v1/users/login  
-POST /api/v1/users/logout  
-GET /api/v1/users/me
-
-GET /api/v1/users/:userId # single user profile  
-PUT /api/v1/users/:userId # update profile  
-DELETE /api/v1/users/:userId # delete profile
+Each must have matching controller file.
 
 ---
 
-# 🏥 PRACTICE / ORGANIZATION
+# 🔐 OWNER ROUTES (owner.routes.ts)
 
-POST /api/v1/practices # create practice  
-GET /api/v1/practices # get all practices  
-GET /api/v1/practices/:practiceId # get single practice  
-PUT /api/v1/practices/:practiceId # update practice  
-DELETE /api/v1/practices/:practiceId # delete practice
+### Auth
 
----
+POST `/owner/login` — ownerLogin
+POST `/owner/logout` — ownerLogout
+GET `/owner/me` — getOwnerMe
 
-# 👤 CREATE USERS BY PRACTICE
+### Profile
 
-POST /api/v1/practices/:practiceId/admins  
-POST /api/v1/practices/:practiceId/supervisors  
-POST /api/v1/practices/:practiceId/therapists
+GET `/owner/profile/:ownerId` — getOwnerProfile
+PUT `/owner/profile/:ownerId` — updateOwnerProfile
+DELETE `/owner/profile/:ownerId` — deleteOwnerProfile
 
----
+### Dashboard
 
-# 👤 UPDATE USERS BY PRACTICE
+GET `/owner/dashboard` — getOwnerDashboard
 
-PUT /api/v1/practices/:practiceId/admins/:adminId  
-PUT /api/v1/practices/:practiceId/supervisors/:supervisorId  
-PUT /api/v1/practices/:practiceId/therapists/:therapistId
+### Password
 
----
-
-# 👤 DELETE USERS BY PRACTICE
-
-DELETE /api/v1/practices/:practiceId/admins/:adminId  
-DELETE /api/v1/practices/:practiceId/supervisors/:supervisorId  
-DELETE /api/v1/practices/:practiceId/therapists/:therapistId
+POST `/owner/forgot-password` — ownerForgotPassword
+POST `/owner/reset-password` — ownerResetPassword
+PUT `/owner/change-password` — ownerChangePassword
 
 ---
 
-# 👤 GET USERS (ALL + SINGLE)
+# 🔐 USER AUTH (auth.routes.ts)
 
-GET /api/v1/practices/:practiceId/admins # all admins by practice  
-GET /api/v1/practices/:practiceId/supervisors # all supervisors by practice  
-GET /api/v1/practices/:practiceId/therapists # all therapists by practice
+POST `/auth/login` — userLogin
+POST `/auth/logout` — userLogout
+GET `/auth/me` — getLoggedInUser
 
-GET /api/v1/admins/:adminId # single admin  
-GET /api/v1/supervisors/:supervisorId # single supervisor  
-GET /api/v1/therapists/:therapistId # single therapist
-
----
-
-# 🔗 ASSIGNMENT
-
-PUT /api/v1/practices/:practiceId/assign-therapist-to-supervisor  
-PUT /api/v1/practices/:practiceId/unassign-therapist-from-supervisor
-
-PUT /api/v1/practices/:practiceId/assign-patient-to-therapist  
-PUT /api/v1/practices/:practiceId/unassign-patient-from-therapist
+POST `/auth/forgot-password` — userForgotPassword
+POST `/auth/reset-password` — userResetPassword
+PUT `/auth/change-password` — userChangePassword
 
 ---
 
-# 🧍 PATIENT
+# 👤 USER PROFILE (users.routes.ts)
 
-POST /api/v1/practices/:practiceId/patients # create patient  
-GET /api/v1/practices/:practiceId/patients # all patients by practice  
-GET /api/v1/therapists/:therapistId/patients # all patients by therapist  
-GET /api/v1/patients/:patientId # single patient
-
-PUT /api/v1/patients/:patientId # update patient  
-DELETE /api/v1/patients/:patientId # delete patient
+GET `/users/:userId` — getUserProfile
+PUT `/users/:userId` — updateUserProfile
+DELETE `/users/:userId` — deleteUserProfile
 
 ---
 
-# 📝 SESSION NOTES (CRUD)
+# 🏥 PRACTICES (practices.routes.ts)
 
-POST /api/v1/practices/:practiceId/sessions # create session  
-GET /api/v1/sessions/:sessionId # single session  
-PUT /api/v1/sessions/:sessionId # update session  
-DELETE /api/v1/sessions/:sessionId # delete session
+POST `/practices/create` — createPractice
+GET `/practices/list` — getAllPractices
+GET `/practices/:practiceId` — getPracticeById
+PUT `/practices/:practiceId` — updatePractice
+DELETE `/practices/:practiceId` — deletePractice
 
 ---
 
-# 📝 SESSION FETCH (ALL + SINGLE)
+# 👨‍💼 ADMINS (admins.routes.ts)
 
-GET /api/v1/practices/:practiceId/sessions # all sessions by practice  
-GET /api/v1/therapists/:therapistId/sessions # all sessions by therapist  
-GET /api/v1/patients/:patientId/sessions # all sessions by patient
+POST `/admins/create` — createAdmin
+PUT `/admins/:adminId` — updateAdmin
+DELETE `/admins/:adminId` — deleteAdmin
 
-GET /api/v1/patients/:patientId/sessions/history # full history  
-GET /api/v1/patients/:patientId/sessions/latest # latest session
+GET `/admins/list` — getAllAdminsByPractice
+GET `/admins/:adminId` — getAdminById
+
+Uses:
+
+```
+req.practiceId
+```
+
+---
+
+# 🧑‍⚕️ SUPERVISORS (supervisors.routes.ts)
+
+POST `/supervisors/create` — createSupervisor
+PUT `/supervisors/:supervisorId` — updateSupervisor
+DELETE `/supervisors/:supervisorId` — deleteSupervisor
+
+GET `/supervisors/list` — getAllSupervisorsByPractice
+GET `/supervisors/:supervisorId` — getSupervisorById
+
+Uses:
+
+```
+req.practiceId
+```
+
+---
+
+# 🧑‍⚕️ THERAPISTS (therapists.routes.ts)
+
+POST `/therapists/create` — createTherapist
+PUT `/therapists/:therapistId` — updateTherapist
+DELETE `/therapists/:therapistId` — deleteTherapist
+
+GET `/therapists/list` — getAllTherapistsByPractice
+GET `/therapists/:therapistId` — getTherapistById
+
+Uses:
+
+```
+req.practiceId
+```
+
+---
+
+# 🔗 ASSIGNMENTS (assignments.routes.ts)
+
+PUT `/assign/therapist-to-supervisor` — assignTherapistToSupervisor
+
+PUT `/assign/patient-to-therapist` — assignPatientToTherapist
+
+Uses:
+
+```
+req.practiceId
+```
+
+---
+
+# 🧍 PATIENTS (patients.routes.ts)
+
+POST `/patients/create` — createPatient
+GET `/patients/list` — getAllPatientsByPractice
+GET `/patients/:patientId` — getPatientById
+PUT `/patients/:patientId` — updatePatient
+DELETE `/patients/:patientId` — deletePatient
+
+GET `/therapists/:therapistId/patients` — getPatientsByTherapist
+
+Uses:
+
+```
+req.practiceId
+```
+
+---
+
+# 📝 SESSIONS CORE (sessions.routes.ts)
+
+POST `/sessions/create` — createSession
+GET `/sessions/:sessionId` — getSessionById
+PUT `/sessions/:sessionId` — updateSession
+DELETE `/sessions/:sessionId` — deleteSession
+
+GET `/sessions/list` — getAllSessionsByPractice
+GET `/therapists/:therapistId/sessions` — getSessionsByTherapist
+GET `/patients/:patientId/sessions` — getSessionsByPatient
+
+GET `/patients/:patientId/sessions/history` — getPatientSessionHistory
+GET `/patients/:patientId/sessions/latest` — getLatestPatientSession
+
+Uses:
+
+```
+req.practiceId
+```
 
 ---
 
 # 📝 SESSION STATES
 
-GET /api/v1/practices/:practiceId/therapists/:therapistId/sessions/draft  
-GET /api/v1/practices/:practiceId/therapists/:therapistId/sessions/upcoming  
-GET /api/v1/practices/:practiceId/supervisors/:supervisorId/sessions/pending-review
+GET `/sessions/draft/:therapistId` — getDraftSessionsByTherapist
+GET `/sessions/upcoming/:therapistId` — getUpcomingSessionsByTherapist
+GET `/sessions/pending-review/:supervisorId` — getPendingReviewSessions
 
-PUT /api/v1/sessions/:sessionId/send-for-review  
-PUT /api/v1/sessions/:sessionId/approve  
-PUT /api/v1/sessions/:sessionId/reject
+PUT `/sessions/send-for-review/:sessionId` — sendSessionForReview
+PUT `/sessions/approve/:sessionId` — approveSession
+PUT `/sessions/reject/:sessionId` — rejectSession
+
+Uses:
+
+```
+req.practiceId
+```
 
 ---
 
-# 📊 DASHBOARD APIs
+# 📊 DASHBOARD (dashboard.routes.ts)
 
-GET /api/v1/practices/:practiceId/dashboard/admin  
-GET /api/v1/practices/:practiceId/dashboard/supervisor/:supervisorId  
-GET /api/v1/practices/:practiceId/dashboard/therapist/:therapistId
+GET `/dashboard/admin` — getAdminDashboard
+GET `/dashboard/supervisor/:supervisorId` — getSupervisorDashboard
+GET `/dashboard/therapist/:therapistId` — getTherapistDashboard
+
+Uses:
+
+```
+req.practiceId
+```

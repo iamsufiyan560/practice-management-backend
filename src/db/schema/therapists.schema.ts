@@ -7,12 +7,17 @@ import {
   date,
   json,
   index,
+  uniqueIndex,
 } from "drizzle-orm/mysql-core";
 
 export const therapists = mysqlTable(
   "therapists",
   {
-    id: char("id", { length: 36 }).primaryKey(),
+    id: char("id", { length: 36 })
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+
+    userId: char("user_id", { length: 36 }).notNull(),
     practiceId: char("practice_id", { length: 36 }).notNull(),
 
     supervisorId: char("supervisor_id", { length: 36 }).notNull(),
@@ -36,5 +41,6 @@ export const therapists = mysqlTable(
     index("therapists_practice_idx").on(t.practiceId),
     index("therapists_supervisor_idx").on(t.supervisorId),
     index("therapists_email_idx").on(t.email),
+    uniqueIndex("therapist_user_practice_unique").on(t.userId, t.practiceId),
   ],
 );

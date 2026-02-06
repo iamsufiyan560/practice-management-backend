@@ -6,13 +6,18 @@ import {
   timestamp,
   date,
   json,
+  uniqueIndex,
   index,
 } from "drizzle-orm/mysql-core";
 
 export const supervisors = mysqlTable(
   "supervisors",
   {
-    id: char("id", { length: 36 }).primaryKey(),
+    id: char("id", { length: 36 })
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+
+    userId: char("user_id", { length: 36 }).notNull(),
     practiceId: char("practice_id", { length: 36 }).notNull(),
 
     email: varchar("email", { length: 255 }).notNull(),
@@ -33,5 +38,6 @@ export const supervisors = mysqlTable(
   (t) => [
     index("supervisors_practice_idx").on(t.practiceId),
     index("supervisors_email_idx").on(t.email),
+    uniqueIndex("supervisor_user_practice_unique").on(t.userId, t.practiceId),
   ],
 );

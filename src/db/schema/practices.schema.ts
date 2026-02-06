@@ -7,8 +7,8 @@ import {
   index,
 } from "drizzle-orm/mysql-core";
 
-export const organizations = mysqlTable(
-  "organizations",
+export const practices = mysqlTable(
+  "practices",
   {
     id: char("id", { length: 36 })
       .primaryKey()
@@ -39,5 +39,8 @@ export const organizations = mysqlTable(
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
   },
-  (t) => [index("org_name_idx").on(t.name), index("org_email_idx").on(t.email)],
+  (t) => [
+    index("practice_name_idx").on(t.name),
+    index("practice_email_idx").on(t.email),
+  ],
 );

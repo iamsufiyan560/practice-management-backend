@@ -1,9 +1,9 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import { httpLogger } from "./config/httpLogger";
-import { logger } from "./config/logger";
-import { globalIpLimiter } from "./middleware/rateLimiter.middleware";
+
+import { globalIpLimiter, practiceContext } from "./middleware";
+import { httpLogger, logger } from "./config";
 
 const app = express();
 const FRONTEND_URL = process.env.FRONTEND_URL!;
@@ -33,6 +33,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(globalIpLimiter);
+app.use(practiceContext);
 
 app.get("/", (_req, res) => {
   res.json({ status: "ok" });

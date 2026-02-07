@@ -28,12 +28,12 @@ owners: id,email,passwordHash,firstName,lastName,createdBy,updatedBy,isDeleted,c
 users: id,email,passwordHash,createdAt,updatedAt
 passwordResets: id,userId,email,otp,otpType(FORGOT_PASSWORD|CHANGE_PASSWORD),otpExpiry,token,tokenExpiry,isUsed,createdAt
 practices: id,name,legalName,taxId,npiNumber,phone,email,website,addressLine1,addressLine2,city,state,postalCode,country,createdBy,updatedBy,isDeleted,createdAt,updatedAt
-userPracticeRoles: id,userId,practiceId,role(ADMIN|SUPERVISOR|THERAPIST),status(ACTIVE|INACTIVE),createdAt
+userPracticeRoles: id,userId,practiceId,email,firstName,lastName,phone, role(ADMIN|SUPERVISOR|THERAPIST),status(ACTIVE|INACTIVE),createdAt,updatedAt ,isDeleted
 supervisors: id,userId,practiceId,email,firstName,lastName,phone,licenseNumber,licenseState,licenseExpiry,specialty(json[]),isDeleted,createdAt,updatedAt  
 therapists: id,userId,practiceId,supervisorId,email,firstName,lastName,phone,licenseNumber,licenseState,licenseExpiry,specialty(json[]),isDeleted,createdAt,updatedAt
 patients: id,practiceId,therapistId,firstName,lastName,email,phone,gender,dob,address(json),emergencyContact(json),status(ACTIVE|INACTIVE),isDeleted,createdBy,updatedBy,createdAt,updatedAt
 patientSessions: id,practiceId,patientId,therapistId,scheduledStart,scheduledEnd,sessionType(INITIAL|FOLLOW_UP|CRISIS),subjective,objective,assessment,plan,additionalNotes,aiSummary,reviewStatus(DRAFT|PENDING|APPROVED|REJECTED),reviewComment,isDeleted,createdBy,updatedBy,createdAt,updatedAt
-FLOW RULE → owner separate table only for platform owner; normal users stored in users table and when creating any user always insert into users + userPracticeRoles + therapists or supervisors table based on role
+FLOW RULE → owner separate table only for platform owner; normal users stored in users table and when creating any user always insert into users + userPracticeRoles + therapists or supervisors table based on role and all data go in both userPracticeRoles + their table bcz admin have only userPracticeRoles but ther and sup have also sperate table
 GLOBAL RULES → always try/catch controllers; always use response.\* utils; use drizzle db; clearAuthCookie on logout/delete/password change/session invalid; use hashPassword/comparePassword only for auth; use generateSecurePassword for new accounts; use encryptField/decryptField for sensitive fields; requireAuth for protected routes; logger for important actions/errors; avoid custom responses or direct cookie handling outside utils
 IMPORT RULE→ Always import using relative ../ path and MUST end with .js extension (example: import { db } from "../db/index.js")
 REQUEST USER RULE → When requireAuth middleware used get logged user via req.user?.userId! req.user?.email! req.user?.role! always use ?. and ! together to avoid TS null error

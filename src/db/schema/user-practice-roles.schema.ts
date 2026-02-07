@@ -5,6 +5,8 @@ import {
   timestamp,
   uniqueIndex,
   index,
+  varchar,
+  boolean,
 } from "drizzle-orm/mysql-core";
 
 export const userPracticeRoles = mysqlTable(
@@ -18,10 +20,18 @@ export const userPracticeRoles = mysqlTable(
     practiceId: char("practice_id", { length: 36 }).notNull(),
 
     role: mysqlEnum("role", ["ADMIN", "SUPERVISOR", "THERAPIST"]).notNull(),
+    email: varchar("email", { length: 255 }).notNull(),
+    firstName: varchar("first_name", { length: 100 }),
+    lastName: varchar("last_name", { length: 100 }),
+    phone: varchar("phone", { length: 50 }),
+    createdBy: char("created_by", { length: 36 }),
+    updatedBy: char("updated_by", { length: 36 }),
 
     status: mysqlEnum("status", ["ACTIVE", "INACTIVE"]).default("ACTIVE"),
 
+    isDeleted: boolean("is_deleted").default(false),
     createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
   },
   (t) => [
     uniqueIndex("user_practice_unique").on(t.userId, t.practiceId),

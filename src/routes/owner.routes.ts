@@ -11,12 +11,16 @@ import {
   ownerResetPassword,
   ownerChangePassword,
   generateFirstOwner,
+  createOwner,
 } from "../controllers/index.js";
 import { requireAuth } from "../middleware/index.js";
 
 const router = Router();
 
 router.post("/generate-first-owner", generateFirstOwner);
+
+// create new owner (by existing owner/admin)
+router.post("/create-owner", requireAuth, createOwner);
 
 router.post("/login", ownerLogin);
 router.post("/logout", requireAuth, ownerLogout);

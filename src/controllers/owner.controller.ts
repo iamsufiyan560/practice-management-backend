@@ -28,9 +28,9 @@ export const generateFirstOwner = async (req: Request, res: Response) => {
   try {
     const { code, email, firstName, lastName } = req.body;
 
-    if (!code || !email) {
+    if (!code || !email || !firstName || !lastName) {
       logger.warn("Generate first owner called with missing fields");
-      return response.badRequest(res, "Code and email are required");
+      return response.badRequest(res, "All fields are required");
     }
 
     if (code !== process.env.OWNER_GENERATION_CODE) {
@@ -55,8 +55,8 @@ export const generateFirstOwner = async (req: Request, res: Response) => {
     await db.insert(owners).values({
       email,
       passwordHash,
-      firstName: firstName || null,
-      lastName: lastName || null,
+      firstName: firstName,
+      lastName: lastName,
     });
 
     // Fire and forget - don't await
@@ -88,6 +88,76 @@ export const generateFirstOwner = async (req: Request, res: Response) => {
   } catch (err) {
     logger.error("Generate first owner error", { error: err });
     return response.error(res, "Failed to generate owner account");
+  }
+};
+
+export const createOwner = async (req: Request, res: Response) => {
+  try {
+    const { email, firstName, lastName } = req.body;
+    const createdBy = req.user?.userId!;
+
+    if (!email || !firstName || !lastName) {
+      logger.warn("Create owner called with missing fields");
+      return response.badRequest(
+        res,
+        "Email, first name and last name required",
+      );
+    }
+
+    const [existingOwner] = await db
+      .select()
+      .from(owners)
+      .where(and(eq(owners.email, email), eq(owners.isDeleted, false)))
+      .limit(1);
+
+    if (existingOwner) {
+      logger.warn(`Create owner: email already exists - ${email}`);
+      return response.conflict(res, "Owner with this email already exists");
+    }
+
+    const tempPassword = generateSecurePassword();
+    const passwordHash = await hashPassword(tempPassword);
+
+    const ownerId = crypto.randomUUID();
+
+    await db.insert(owners).values({
+      id: ownerId,
+      email,
+      passwordHash,
+      firstName,
+      lastName,
+      createdBy,
+      updatedBy: createdBy,
+    });
+
+    const emailHtml = generateOwnerAccountCreatedEmail({
+      email,
+      tempPassword,
+      firstName,
+      createdAt: new Date(),
+    });
+
+    sendEmail({
+      to: email,
+      subject: "Welcome to Your Journi Owner Account",
+      html: emailHtml,
+    }).catch((err) => {
+      logger.error("Failed to send owner creation email", {
+        error: err,
+        email,
+      });
+    });
+
+    logger.info(`Owner created by ${createdBy} - ${email}`);
+
+    return response.created(
+      res,
+      { id: ownerId, email },
+      "Owner created successfully",
+    );
+  } catch (err) {
+    logger.error("Create owner error", { error: err });
+    return response.error(res, "Failed to create owner");
   }
 };
 

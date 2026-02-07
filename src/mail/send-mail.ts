@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-import { logger } from "@/config";
+import { logger } from "../config/index.js";
 import nodemailer from "nodemailer";
 
 type SendEmailParams = {
@@ -12,7 +12,6 @@ type SendEmailParams = {
 
 let transporter: nodemailer.Transporter | null = null;
 
-console.log("SMTP_HOST", process.env.SMTP_HOST);
 // create transporter once (singleton)
 function getTransporter() {
   if (transporter) return transporter;

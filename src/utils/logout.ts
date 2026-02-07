@@ -1,9 +1,10 @@
 import { Response, Request } from "express";
 import { eq } from "drizzle-orm";
-import { authSessions } from "@/db/schema";
-import { db } from "@/db";
-import { response } from "./response";
-import { clearAuthCookie } from "./cookie";
+
+import { db } from "../db/index.js";
+import { response } from "./response.js";
+import { clearAuthCookie } from "./cookie.js";
+import { authSessions } from "../db/schema/authSessions.schema.js";
 
 export async function logoutUser(req: Request, res: Response) {
   try {

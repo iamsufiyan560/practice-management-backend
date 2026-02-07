@@ -6,7 +6,7 @@ import {
   userForgotPassword,
   userResetPassword,
   userChangePassword,
-} from "@/controllers";
+} from "../controllers/index.js";
 
 const router = Router();
 

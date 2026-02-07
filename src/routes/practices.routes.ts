@@ -5,7 +5,7 @@ import {
   getPracticeById,
   updatePractice,
   deletePractice,
-} from "@/controllers";
+} from "../controllers/index.js";
 
 const router = Router();
 

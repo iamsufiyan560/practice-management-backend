@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { HTTP_STATUS } from "@/constants/httpStatus";
+import { HTTP_STATUS } from "./httpStatus.js";
 
 type HttpStatus = (typeof HTTP_STATUS)[keyof typeof HTTP_STATUS];
 

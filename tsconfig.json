@@ -30,10 +30,7 @@
     /* Environment types */
     "types": ["node"],
 
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    }
+    "baseUrl": "."
   },
   "include": ["src"]
 }

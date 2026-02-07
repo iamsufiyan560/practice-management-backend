@@ -5,7 +5,7 @@ import {
   deleteAdmin,
   getAllAdminsByPractice,
   getAdminById,
-} from "@/controllers";
+} from "../controllers/index.js";
 
 const router = Router();
 

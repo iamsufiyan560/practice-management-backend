@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
   assignTherapistToSupervisor,
   assignPatientToTherapist,
-} from "@/controllers";
+} from "../controllers/index.js";
 
 const router = Router();
 

@@ -1,8 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import { db } from "@/db";
-import { authSessions } from "@/db/schema";
+
 import { eq, and, gt } from "drizzle-orm";
-import { response } from "@/utils";
+import { response } from "../utils/index.js";
+import { db } from "../db/index.js";
+import { authSessions } from "../db/schema/authSessions.schema.js";
+import { logger } from "../config/index.js";
 
 export type AuthUser = {
   userId: string;
@@ -26,6 +28,8 @@ export async function requireAuth(
 ) {
   try {
     const cookie = req.cookies?.auth;
+
+    logger.warn(`cookie - ${req.cookies?.auth.sessionId}`);
 
     if (!cookie?.sessionId) {
       return response.unauthorized(res, "Unauthorized");

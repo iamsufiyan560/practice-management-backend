@@ -5,7 +5,7 @@ import {
   deleteTherapist,
   getAllTherapistsByPractice,
   getTherapistById,
-} from "@/controllers";
+} from "../controllers/index.js";
 
 const router = Router();
 

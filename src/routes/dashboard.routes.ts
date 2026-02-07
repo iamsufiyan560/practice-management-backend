@@ -2,7 +2,7 @@ import {
   getAdminDashboard,
   getSupervisorDashboard,
   getTherapistDashboard,
-} from "@/controllers";
+} from "../controllers/index.js";
 import { Router } from "express";
 
 const router = Router();

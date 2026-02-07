@@ -6,7 +6,7 @@ import {
   updatePatient,
   deletePatient,
   getPatientsByTherapist,
-} from "@/controllers";
+} from "../controllers/index.js";
 
 const router = Router();
 

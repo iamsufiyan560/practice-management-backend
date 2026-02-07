@@ -10,22 +10,26 @@ import {
   ownerForgotPassword,
   ownerResetPassword,
   ownerChangePassword,
-} from "@/controllers";
+  generateFirstOwner,
+} from "../controllers/index.js";
+import { requireAuth } from "../middleware/index.js";
 
 const router = Router();
 
+router.post("/generate-first-owner", generateFirstOwner);
+
 router.post("/login", ownerLogin);
-router.post("/logout", ownerLogout);
-router.get("/me", getOwnerMe);
+router.post("/logout", requireAuth, ownerLogout);
+router.get("/me", requireAuth, getOwnerMe);
 
-router.get("/profile/:ownerId", getOwnerProfile);
-router.put("/profile/:ownerId", updateOwnerProfile);
-router.delete("/profile/:ownerId", deleteOwnerProfile);
+router.get("/profile/:ownerId", requireAuth, getOwnerProfile);
+router.put("/profile/:ownerId", requireAuth, updateOwnerProfile);
+router.delete("/profile/:ownerId", requireAuth, deleteOwnerProfile);
 
-router.get("/dashboard", getOwnerDashboard);
+router.get("/dashboard", requireAuth, getOwnerDashboard);
 
 router.post("/forgot-password", ownerForgotPassword);
 router.post("/reset-password", ownerResetPassword);
-router.put("/change-password", ownerChangePassword);
+router.put("/change-password", requireAuth, ownerChangePassword);
 
 export default router;

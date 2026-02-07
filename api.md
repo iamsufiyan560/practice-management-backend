@@ -8,6 +8,7 @@ Base URL: `/api/v1`
 
 ### Auth
 
+POST `generate-first-owner` - Generate First owner
 POST `/owner/login` — ownerLogin
 POST `/owner/logout` — ownerLogout
 GET `/owner/me` — getOwnerMe

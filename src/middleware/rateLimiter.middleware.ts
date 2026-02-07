@@ -1,6 +1,6 @@
 import rateLimit from "express-rate-limit";
 import { Request } from "express";
-import { response } from "@/utils";
+import { response } from "../utils/index.js";
 
 export function getIP(req: Request): string {
   const xfwd = req.headers["x-forwarded-for"];

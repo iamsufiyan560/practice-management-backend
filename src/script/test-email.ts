@@ -7,8 +7,8 @@ import {
   generateUserForgotPasswordEmail,
   generateUserPasswordChangedEmail,
   generateUserPasswordResetSuccessEmail,
-} from "@/mail/templates";
-import { sendEmail } from "@/mail/send-mail";
+} from "../mail/templates/index.js";
+import { sendEmail } from "../mail/send-mail.js";
 
 const TEST_EMAIL = process.env.TEST_EMAIL;
 

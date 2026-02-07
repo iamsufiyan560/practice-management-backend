@@ -1,3 +1,3 @@
-export * from "./auth.middleware";
-export * from "./practice-context.middleware";
-export * from "./rateLimiter.middleware";
+export * from "./auth.middleware.js";
+export * from "./practice-context.middleware.js";
+export * from "./rateLimiter.middleware.js";

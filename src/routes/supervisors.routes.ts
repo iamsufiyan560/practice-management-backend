@@ -5,7 +5,7 @@ import {
   deleteSupervisor,
   getAllSupervisorsByPractice,
   getSupervisorById,
-} from "@/controllers";
+} from "../controllers/index.js";
 
 const router = Router();
 

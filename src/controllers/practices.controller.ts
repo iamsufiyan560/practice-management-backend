@@ -24,15 +24,6 @@ export const createPractice = async (req: Request, res: Response) => {
     } = req.body;
     const createdBy = req.user?.userId!;
 
-    if (!name || !email || !phone) {
-      logger.warn("Create practice missing required fields");
-      return response.badRequest(res, "Name, email and phone are required");
-    }
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      logger.warn("Create practice invalid email format");
-      return response.badRequest(res, "Invalid email format");
-    }
-
     const inserted = await db
       .insert(practices)
       .values({
@@ -199,25 +190,6 @@ export const updatePractice = async (req: Request, res: Response) => {
     if (!practiceId) {
       logger.warn("Update practice called without id");
       return response.badRequest(res, "Practice ID is required");
-    }
-
-    if (
-      !name &&
-      !legalName &&
-      !taxId &&
-      !npiNumber &&
-      !phone &&
-      !email &&
-      !website &&
-      !addressLine1 &&
-      !addressLine2 &&
-      !city &&
-      !state &&
-      !postalCode &&
-      !country
-    ) {
-      logger.warn("Update practice called with no fields");
-      return response.badRequest(res, "At least one field is required");
     }
 
     const [existingPractice] = await db

@@ -13,21 +13,31 @@ import {
   generateFirstOwner,
   createOwner,
 } from "../controllers/index.js";
-import { requireAuth } from "../middleware/index.js";
+import { requireAuth, validate } from "../middleware/index.js";
+import { createOwnerSchema, updateOwnerSchema } from "../validations/index.js";
 
 const router = Router();
 
 router.post("/generate-first-owner", generateFirstOwner);
 
-// create new owner (by existing owner/admin)
-router.post("/create-owner", requireAuth, createOwner);
+router.post(
+  "/create-owner",
+  requireAuth,
+  validate(createOwnerSchema),
+  createOwner,
+);
 
 router.post("/login", ownerLogin);
 router.post("/logout", requireAuth, ownerLogout);
 router.get("/me", requireAuth, getOwnerMe);
 
 router.get("/profile/:ownerId", requireAuth, getOwnerProfile);
-router.put("/profile/:ownerId", requireAuth, updateOwnerProfile);
+router.put(
+  "/profile/:ownerId",
+  requireAuth,
+  validate(updateOwnerSchema),
+  updateOwnerProfile,
+);
 router.delete("/profile/:ownerId", requireAuth, deleteOwnerProfile);
 
 router.get("/dashboard", requireAuth, getOwnerDashboard);

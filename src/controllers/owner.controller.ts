@@ -97,14 +97,6 @@ export const createOwner = async (req: Request, res: Response) => {
     const { email, firstName, lastName } = req.body;
     const createdBy = req.user?.userId!;
 
-    if (!email || !firstName || !lastName) {
-      logger.warn("Create owner called with missing fields");
-      return response.badRequest(
-        res,
-        "Email, first name and last name required",
-      );
-    }
-
     const [existingOwner] = await db
       .select()
       .from(owners)

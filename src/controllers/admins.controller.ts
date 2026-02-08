@@ -24,14 +24,6 @@ export const createAdmin = async (req: Request, res: Response) => {
     const { email, firstName, lastName, phone } = req.body;
     const createdBy = req.user?.userId!;
 
-    if (!email || !firstName || !lastName || !phone) {
-      logger.warn("Create admin called with missing fields");
-      return response.badRequest(
-        res,
-        "Email, first name, last name and phone are required",
-      );
-    }
-
     let userId: string;
     let isNewUser = false;
     let generatedPassword = "";
@@ -187,16 +179,6 @@ export const updateAdmin = async (req: Request, res: Response) => {
     if (!adminId) {
       logger.warn("Update admin called without adminId");
       return response.badRequest(res, "Admin ID is required");
-    }
-
-    if (!firstName && !lastName && !phone && !status) {
-      logger.warn("Update admin called with no fields");
-      return response.badRequest(res, "At least one field is required");
-    }
-
-    if (status && status !== "ACTIVE" && status !== "INACTIVE") {
-      logger.warn(`Invalid admin status - ${status}`);
-      return response.badRequest(res, "Status must be ACTIVE or INACTIVE");
     }
 
     const [existingAdmin] = await db

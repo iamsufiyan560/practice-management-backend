@@ -7,12 +7,25 @@ import {
   getAdminById,
   getAllInactiveAdminsByPractice,
 } from "../controllers/index.js";
-import { practiceContext, requireAuth } from "../middleware/index.js";
+import { practiceContext, requireAuth, validate } from "../middleware/index.js";
+import { createAdminSchema, updateAdminSchema } from "../validations/index.js";
 
 const router = Router();
 
-router.post("/create", practiceContext, requireAuth, createAdmin);
-router.put("/:adminId", practiceContext, requireAuth, updateAdmin);
+router.post(
+  "/create",
+  practiceContext,
+  requireAuth,
+  validate(createAdminSchema),
+  createAdmin,
+);
+router.put(
+  "/:adminId",
+  practiceContext,
+  requireAuth,
+  validate(updateAdminSchema),
+  updateAdmin,
+);
 router.delete("/:adminId", practiceContext, requireAuth, deleteAdmin);
 
 router.get("/list", practiceContext, requireAuth, getAllAdminsByPractice);

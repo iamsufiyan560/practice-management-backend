@@ -33,14 +33,6 @@ export const createSupervisor = async (req: Request, res: Response) => {
     } = req.body;
     const createdBy = req.user?.userId!;
 
-    if (!email || !firstName || !lastName || !phone) {
-      logger.warn("Create supervisor missing required fields");
-      return response.badRequest(
-        res,
-        "Email, first name, last name and phone are required",
-      );
-    }
-
     let userId: string;
     let isNewUser = false;
     let generatedPassword = "";
@@ -357,19 +349,6 @@ export const updateSupervisor = async (req: Request, res: Response) => {
     if (!supervisorId) {
       logger.warn("Update supervisor called without id");
       return response.badRequest(res, "Supervisor ID is required");
-    }
-
-    if (
-      !firstName &&
-      !lastName &&
-      !phone &&
-      !licenseNumber &&
-      !licenseState &&
-      !licenseExpiry &&
-      !specialty
-    ) {
-      logger.warn("Update supervisor called with no fields");
-      return response.badRequest(res, "At least one field is required");
     }
 
     // verify supervisor exists

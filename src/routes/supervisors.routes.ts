@@ -7,14 +7,23 @@ import {
   getSupervisorById,
   getAllInactiveSupervisorByPractice,
 } from "../controllers/index.js";
-import { requireAuth, practiceContext } from "../middleware/index.js";
+import { requireAuth, validate, practiceContext } from "../middleware/index.js";
+
+import {
+  createSupervisorSchema,
+  updateSupervisorSchema,
+} from "../validations/index.js";
 
 const router = Router();
 
 router.use(requireAuth, practiceContext);
 
-router.post("/create", createSupervisor);
-router.put("/:supervisorId", updateSupervisor);
+router.post("/create", validate(createSupervisorSchema), createSupervisor);
+router.put(
+  "/:supervisorId",
+  validate(updateSupervisorSchema),
+  updateSupervisor,
+);
 router.delete("/:supervisorId", deleteSupervisor);
 
 router.get("/list", getAllSupervisorsByPractice);

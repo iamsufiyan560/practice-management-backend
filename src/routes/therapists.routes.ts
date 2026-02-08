@@ -7,14 +7,18 @@ import {
   getTherapistById,
   getAllInactiveTherapistsByPractice,
 } from "../controllers/index.js";
-import { requireAuth, practiceContext } from "../middleware/index.js";
+import { requireAuth, practiceContext, validate } from "../middleware/index.js";
+import {
+  createTherapistSchema,
+  updateTherapistSchema,
+} from "../validations/index.js";
 
 const router = Router();
 
 router.use(requireAuth, practiceContext);
 
-router.post("/create", createTherapist);
-router.put("/:therapistId", updateTherapist);
+router.post("/create", validate(createTherapistSchema), createTherapist);
+router.put("/:therapistId", validate(updateTherapistSchema), updateTherapist);
 router.delete("/:therapistId", deleteTherapist);
 
 router.get("/list", getAllTherapistsByPractice);

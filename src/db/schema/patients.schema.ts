@@ -1,3 +1,4 @@
+// database schema
 import {
   mysqlTable,
   char,
@@ -6,7 +7,6 @@ import {
   timestamp,
   date,
   json,
-  mysqlEnum,
   index,
 } from "drizzle-orm/mysql-core";
 
@@ -28,8 +28,21 @@ export const patients = mysqlTable(
     gender: varchar("gender", { length: 20 }),
     dob: date("dob"),
 
-    address: json("address"),
-    emergencyContact: json("emergency_contact"),
+    address: json("address").$type<{
+      addressLine1?: string;
+      addressLine2?: string;
+      city?: string;
+      state?: string;
+      postalCode?: string;
+      country?: string;
+    }>(),
+    emergencyContact: json("emergency_contact").$type<{
+      name?: string;
+      relationship?: string;
+      phone?: string;
+      email?: string;
+      authorized?: boolean;
+    }>(),
 
     isDeleted: boolean("is_deleted").default(false),
     createdBy: char("created_by", { length: 36 }),

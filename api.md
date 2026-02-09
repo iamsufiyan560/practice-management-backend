@@ -123,6 +123,7 @@ req.practiceId
 # 🧍 PATIENTS (patients.routes.ts)
 
 POST `/patients/create` — createPatient
+POST `/create-by-therapist` — createPatientByTherapist
 GET `/patients/list` — getAllPatientsByPractice
 GET `/patients/:patientId` — getPatientById
 PUT `/patients/:patientId` — updatePatient

@@ -7,3 +7,4 @@ export * from "./admin.validation.js";
 export * from "./therapist.validation.js";
 export * from "./supervisor.validation.js";
 export * from "./auth.validation.js";
+export * from "./patient.validation.js";

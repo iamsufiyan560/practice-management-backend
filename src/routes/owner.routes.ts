@@ -14,7 +14,12 @@ import {
   createOwner,
   getAllOwners,
 } from "../controllers/index.js";
-import { requireAuth, validate } from "../middleware/index.js";
+import {
+  authLimiter,
+  requireAuth,
+  userLimiter,
+  validate,
+} from "../middleware/index.js";
 import {
   changePasswordSchema,
   createOwnerSchema,
@@ -59,18 +64,23 @@ router.get("/list", requireAuth, getAllOwners);
 
 router.post(
   "/forgot-password",
+  authLimiter(60 * 60 * 1000, 5),
   validate(forgotPasswordSchema),
   ownerForgotPassword,
 );
+
 router.post(
   "/reset-password",
+  authLimiter(60 * 60 * 1000, 5),
   validate(resetPasswordSchema),
   ownerResetPassword,
 );
+
 router.put(
   "/change-password",
-  validate(changePasswordSchema),
   requireAuth,
+  userLimiter(60 * 60 * 1000, 5),
+  validate(changePasswordSchema),
   ownerChangePassword,
 );
 

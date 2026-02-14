@@ -32,7 +32,7 @@ app.use(httpLogger);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(globalIpLimiter);
+app.use(globalIpLimiter());
 
 app.get("/", (_req, res) => {
   res.json({ status: "ok" });

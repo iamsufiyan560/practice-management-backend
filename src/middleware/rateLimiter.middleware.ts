@@ -16,55 +16,65 @@ export function getIP(req: Request): string {
   return req.socket?.remoteAddress ?? "unknown";
 }
 
-export const globalIpLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 300,
-  standardHeaders: true,
-  legacyHeaders: false,
+export const globalIpLimiter = (
+  windowMs: number = 60 * 1000,
+  max: number = 300,
+) =>
+  rateLimit({
+    windowMs,
+    max,
+    standardHeaders: true,
+    legacyHeaders: false,
 
-  keyGenerator: (req) => getIP(req),
+    keyGenerator: (req) => getIP(req),
 
-  handler: (_req, res) => {
-    return response.tooMany(
-      res,
-      "Too many requests from this network. Slow down.",
-    );
-  },
-});
+    handler: (_req, res) => {
+      return response.tooMany(
+        res,
+        "Too many requests from this network. Slow down.",
+      );
+    },
+  });
 
-export const userLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 120,
-  standardHeaders: true,
-  legacyHeaders: false,
+export const userLimiter = (windowMs: number = 60 * 1000, max: number = 120) =>
+  rateLimit({
+    windowMs,
+    max,
+    standardHeaders: true,
+    legacyHeaders: false,
 
-  keyGenerator: (req: Request) => {
-    const userId = (req as any).user?.id;
-    if (!userId) return `guest-${getIP(req)}`;
-    return `user-${userId}`;
-  },
+    keyGenerator: (req: Request) => {
+      const userId = req.user?.userId!;
 
-  handler: (_req, res) => {
-    return response.tooMany(
-      res,
-      "You are sending requests too fast. Please slow down.",
-    );
-  },
-});
+      if (!userId) return `guest-${getIP(req)}`;
+      return `user-${userId}`;
+    },
 
-export const authLimiter = rateLimit({
-  windowMs: 10 * 60 * 1000,
-  max: 20,
-  standardHeaders: true,
-  legacyHeaders: false,
+    handler: (_req, res) => {
+      return response.tooMany(
+        res,
+        "You are sending requests too fast. Please slow down.",
+      );
+    },
+  });
 
-  keyGenerator: (req: Request) => {
-    const ip = getIP(req);
-    const email = req.body?.email || "anon";
-    return `auth-${ip}-${email}`;
-  },
+export const authLimiter = (
+  windowMs: number = 10 * 60 * 1000,
+  max: number = 20,
+) =>
+  rateLimit({
+    windowMs,
+    max,
+    standardHeaders: true,
+    legacyHeaders: false,
 
-  handler: (_req, res) => {
-    return response.tooMany(res, "Too many attempts. Try again later.");
-  },
-});
+    keyGenerator: (req: Request) => {
+      const ip = getIP(req);
+      const email = req.body?.email || "anon";
+      return `auth-${ip}-${email}`;
+    },
+
+    handler: (_req, res) => {
+      return response.tooMany(res, "Too many attempts. Try again later.");
+    },
+  });

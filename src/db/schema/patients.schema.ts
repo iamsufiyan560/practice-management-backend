@@ -20,13 +20,13 @@ export const patients = mysqlTable(
     practiceId: char("practice_id", { length: 36 }).notNull(),
     therapistId: char("therapist_id", { length: 36 }),
 
-    firstName: varchar("first_name", { length: 100 }),
-    lastName: varchar("last_name", { length: 100 }),
-    email: varchar("email", { length: 255 }),
-    phone: varchar("phone", { length: 50 }),
+    firstName: varchar("first_name", { length: 100 }).notNull(),
+    lastName: varchar("last_name", { length: 100 }).notNull(),
+    email: varchar("email", { length: 255 }).notNull(),
+    phone: varchar("phone", { length: 50 }).notNull(),
 
-    gender: varchar("gender", { length: 20 }),
-    dob: date("dob"),
+    gender: varchar("gender", { length: 20 }).notNull(),
+    dob: date("dob").notNull(),
 
     address: json("address").$type<{
       addressLine1?: string;

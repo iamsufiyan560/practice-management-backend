@@ -1,22 +1,24 @@
 import { z } from "zod";
 import {
+  nonEmptyString,
   optionalString255,
   optionalString100,
   optionalString50,
+  optionalPhoneField,
   atLeastOne,
-  phoneField,
   emailField,
 } from "./common.validation.js";
 
 export const createPracticeSchema = z.object({
-  name: z.string().trim().min(1, "Practice name is required").max(255),
+  name: nonEmptyString("Practice name", 255), // required
 
   legalName: optionalString255("Legal name"),
   taxId: optionalString50("Tax ID"),
   npiNumber: optionalString50("NPI number"),
 
-  phone: phoneField,
-  email: emailField,
+  phone: optionalPhoneField,
+  email: emailField, // required
+
   website: optionalString255("Website"),
 
   addressLine1: optionalString255("Address line 1"),

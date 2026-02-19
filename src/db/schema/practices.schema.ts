@@ -21,7 +21,7 @@ export const practices = mysqlTable(
     npiNumber: varchar("npi_number", { length: 50 }),
 
     phone: varchar("phone", { length: 50 }),
-    email: varchar("email", { length: 255 }),
+    email: varchar("email", { length: 255 }).notNull(),
     website: varchar("website", { length: 255 }),
 
     addressLine1: varchar("address_line1", { length: 255 }),

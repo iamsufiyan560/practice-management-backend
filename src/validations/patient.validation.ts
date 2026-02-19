@@ -4,40 +4,52 @@ import {
   firstNameField,
   lastNameField,
   phoneField,
-  optionalSqlDateField,
+  nonEmptyString,
+  optionalString255,
+  optionalString100,
+  optionalString50,
   atLeastOne,
+  sqlDateField,
 } from "./common.validation.js";
 
+/* -------------------- ADDRESS -------------------- */
 const addressField = z
   .object({
-    addressLine1: z.string().optional(),
-    addressLine2: z.string().optional(),
-    city: z.string().optional(),
-    state: z.string().optional(),
-    postalCode: z.string().optional(),
-    country: z.string().optional(),
+    addressLine1: optionalString255("Address line 1"),
+    addressLine2: optionalString255("Address line 2"),
+    city: optionalString100("City"),
+    state: optionalString100("State"),
+    postalCode: optionalString50("Postal code"),
+    country: optionalString100("Country"),
   })
   .optional();
 
+/* -------------------- EMERGENCY CONTACT -------------------- */
 const emergencyContactField = z
   .object({
-    name: z.string().optional(),
-    relationship: z.string().optional(),
-    phone: z.string().optional(),
-    email: z.string().email().optional().or(z.literal("")),
+    name: optionalString100("Emergency contact name"),
+    relationship: optionalString100("Relationship"),
+    phone: optionalString50("Emergency contact phone"),
+    email: emailField.optional(),
     authorized: z.boolean().optional(),
   })
   .optional();
 
+/* -------------------- CREATE -------------------- */
+/* must match DB .notNull() */
 export const createPatientSchema = z.object({
   firstName: firstNameField,
   lastName: lastNameField,
-  email: emailField.optional(),
-  phone: phoneField.optional(),
-  gender: z.string().max(20).optional(),
-  dob: optionalSqlDateField,
+
+  email: emailField, // required
+  phone: phoneField, // required
+
+  gender: nonEmptyString("Gender", 20), // required
+  dob: sqlDateField, // required YYYY-MM-DD
+
   address: addressField,
   emergencyContact: emergencyContactField,
 });
 
+/* -------------------- UPDATE -------------------- */
 export const updatePatientSchema = atLeastOne(createPatientSchema.partial());

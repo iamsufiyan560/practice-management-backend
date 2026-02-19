@@ -4,7 +4,6 @@ import {
   firstNameField,
   lastNameField,
   phoneField,
-  statusField,
   atLeastOne,
 } from "./common.validation.js";
 

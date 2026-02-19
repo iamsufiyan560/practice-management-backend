@@ -1,16 +1,16 @@
-// validation schema
 import { z } from "zod";
+import { nonEmptyString } from "./common.validation.js";
 
 export const assignTherapistToSupervisorSchema = z.object({
   therapistIds: z
-    .array(z.string().length(36))
+    .array(nonEmptyString("Therapist ID", 36))
     .min(1, "At least one therapist ID required"),
-  supervisorId: z.string().length(36),
+  supervisorId: nonEmptyString("Supervisor ID", 36),
 });
 
 export const assignPatientToTherapistSchema = z.object({
   patientIds: z
-    .array(z.string().length(36))
+    .array(nonEmptyString("Patient ID", 36))
     .min(1, "At least one patient ID required"),
-  therapistId: z.string().length(36),
+  therapistId: nonEmptyString("Therapist ID", 36),
 });

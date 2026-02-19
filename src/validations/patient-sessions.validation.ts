@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { atLeastOne } from "./common.validation.js";
+import { atLeastOne, optionalString255 } from "./common.validation.js";
 
 const sessionTypeEnum = z.enum(["INITIAL", "FOLLOW_UP", "CRISIS"]);
 
@@ -9,11 +9,11 @@ export const createSessionSchema = z.object({
   startTime: z.string().regex(/^\d{2}:\d{2}$/), // HH:MM
   endTime: z.string().regex(/^\d{2}:\d{2}$/), // HH:MM
   sessionType: sessionTypeEnum,
-  subjective: z.string().optional(),
-  objective: z.string().optional(),
-  assessment: z.string().optional(),
-  plan: z.string().optional(),
-  additionalNotes: z.string().optional(),
+  subjective: optionalString255("Subjective"),
+  objective: optionalString255("Objective"),
+  assessment: optionalString255("Assessment"),
+  plan: optionalString255("Plan"),
+  additionalNotes: optionalString255("Additional notes"),
 });
 
 export const updateSessionSchema = atLeastOne(

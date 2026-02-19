@@ -1,21 +1,31 @@
 import { z } from "zod";
 
 /* -------------------- BASIC STRING RULE -------------------- */
-const nonEmptyString = (field: string, max = 255) =>
+export const nonEmptyString = (field: string, max = 255) =>
   z
     .string({ error: `${field} is required` })
     .trim()
     .min(1, `${field} is required`)
     .max(max, `${field} must be less than ${max} characters`);
 
+/* -------------------- OPTIONAL STRING REUSABLES -------------------- */
+export const optionalString255 = (field: string) =>
+  z.string().trim().max(255).optional();
+
+export const optionalString100 = (field: string) =>
+  z.string().trim().max(100).optional();
+
+export const optionalString50 = (field: string) =>
+  z.string().trim().max(50).optional();
+
 /* -------------------- COMMON FIELDS -------------------- */
-export const emailField = z.email("Invalid email format").max(255);
-
-export const optionalEmailField = z
-
+export const emailField = z
+  .string()
+  .trim()
   .email("Invalid email format")
-  .max(255)
-  .optional();
+  .max(255);
+
+export const optionalEmailField = emailField.optional();
 
 export const passwordField = z
   .string({ error: "Password is required" })
@@ -28,29 +38,13 @@ export const passwordField = z
 
 export const phoneField = nonEmptyString("Phone", 50);
 
-export const optionalPhoneField = z
-  .string()
-  .trim()
-  .min(1, "Phone cannot be empty")
-  .max(50)
-  .optional();
+export const optionalPhoneField = optionalString50("Phone");
 
 export const firstNameField = nonEmptyString("First name", 100);
 export const lastNameField = nonEmptyString("Last name", 100);
 
-export const optionalFirstNameField = z
-  .string()
-  .trim()
-  .min(1, "First name cannot be empty")
-  .max(100)
-  .optional();
-
-export const optionalLastNameField = z
-  .string()
-  .trim()
-  .min(1, "Last name cannot be empty")
-  .max(100)
-  .optional();
+export const optionalFirstNameField = optionalString100("First name");
+export const optionalLastNameField = optionalString100("Last name");
 
 /* -------------------- SQL DATE (YYYY-MM-DD) -------------------- */
 export const sqlDateField = z
@@ -62,38 +56,14 @@ export const optionalSqlDateField = z
   .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format")
   .optional();
 
-/* -------------------- STATUS ENUMS -------------------- */
-export const statusField = z.enum(["ACTIVE", "INACTIVE"]);
-
 /* -------------------- LICENSE -------------------- */
-export const optionalLicenseNumber = z
-  .string()
-  .trim()
-  .min(1, "License number cannot be empty")
-  .max(100)
-  .optional();
-
-export const optionalLicenseState = z
-  .string()
-  .trim()
-  .min(1, "License state cannot be empty")
-  .max(50)
-  .optional();
+export const optionalLicenseNumber = optionalString100("License number");
+export const optionalLicenseState = optionalString50("License state");
 
 /* -------------------- SPECIALTY ARRAY -------------------- */
 export const optionalSpecialty = z
   .array(z.string().min(1, "Specialty cannot be empty"))
   .optional();
-
-/* -------------------- PRACTICE ADDRESS -------------------- */
-export const optionalString255 = (field: string) =>
-  z.string().trim().min(1, `${field} cannot be empty`).max(255).optional();
-
-export const optionalString100 = (field: string) =>
-  z.string().trim().min(1, `${field} cannot be empty`).max(100).optional();
-
-export const optionalString50 = (field: string) =>
-  z.string().trim().min(1, `${field} cannot be empty`).max(50).optional();
 
 /* -------------------- AT LEAST ONE FIELD FOR UPDATE -------------------- */
 export const atLeastOne = (schema: z.ZodObject<any>) =>

@@ -8,7 +8,6 @@ import {
   optionalString255,
   optionalString100,
   optionalString50,
-  atLeastOne,
   sqlDateField,
 } from "./common.validation.js";
 
@@ -52,4 +51,4 @@ export const createPatientSchema = z.object({
 });
 
 /* -------------------- UPDATE -------------------- */
-export const updatePatientSchema = atLeastOne(createPatientSchema.partial());
+export const updatePatientSchema = createPatientSchema;

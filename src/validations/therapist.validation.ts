@@ -8,7 +8,6 @@ import {
   optionalLicenseState,
   optionalSqlDateField,
   optionalSpecialty,
-  atLeastOne,
 } from "./common.validation.js";
 
 export const createTherapistSchema = z.object({
@@ -23,6 +22,6 @@ export const createTherapistSchema = z.object({
   specialty: optionalSpecialty,
 });
 
-export const updateTherapistSchema = atLeastOne(
-  createTherapistSchema.omit({ email: true }).partial(),
-);
+export const updateTherapistSchema = createTherapistSchema.omit({
+  email: true,
+});

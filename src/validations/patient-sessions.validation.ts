@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { atLeastOne, optionalString255 } from "./common.validation.js";
+import { nonEmptyString, optionalString255 } from "./common.validation.js";
 
 const sessionTypeEnum = z.enum(["INITIAL", "FOLLOW_UP", "CRISIS"]);
 
@@ -16,10 +16,10 @@ export const createSessionSchema = z.object({
   additionalNotes: optionalString255("Additional notes"),
 });
 
-export const updateSessionSchema = atLeastOne(
-  createSessionSchema.omit({ patientId: true }).partial(),
-);
+export const updateSessionSchema = createSessionSchema.omit({
+  patientId: true,
+});
 
 export const reviewSessionSchema = z.object({
-  reviewComment: z.string().min(1, "Review comment is required"),
+  reviewComment: nonEmptyString("Review comment is required"),
 });

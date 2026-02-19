@@ -1,7 +1,6 @@
 import { z } from "zod";
 import {
   emailField,
-  atLeastOne,
   firstNameField,
   lastNameField,
 } from "./common.validation.js";
@@ -12,6 +11,4 @@ export const createOwnerSchema = z.object({
   lastName: lastNameField,
 });
 
-export const updateOwnerSchema = atLeastOne(
-  createOwnerSchema.omit({ email: true }).partial(),
-);
+export const updateOwnerSchema = createOwnerSchema.omit({ email: true });

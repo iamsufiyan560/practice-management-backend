@@ -4,7 +4,6 @@ import {
   firstNameField,
   lastNameField,
   phoneField,
-  atLeastOne,
 } from "./common.validation.js";
 
 export const createAdminSchema = z.object({
@@ -14,6 +13,4 @@ export const createAdminSchema = z.object({
   phone: phoneField,
 });
 
-export const updateAdminSchema = atLeastOne(
-  createAdminSchema.omit({ email: true }).partial(),
-);
+export const updateAdminSchema = createAdminSchema.omit({ email: true });

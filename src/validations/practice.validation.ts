@@ -5,12 +5,11 @@ import {
   optionalString100,
   optionalString50,
   optionalPhoneField,
-  atLeastOne,
   emailField,
 } from "./common.validation.js";
 
 export const createPracticeSchema = z.object({
-  name: nonEmptyString("Practice name", 255), // required
+  name: nonEmptyString("Practice name"), // required
 
   legalName: optionalString255("Legal name"),
   taxId: optionalString50("Tax ID"),
@@ -29,4 +28,4 @@ export const createPracticeSchema = z.object({
   country: optionalString100("Country"),
 });
 
-export const updatePracticeSchema = atLeastOne(createPracticeSchema.partial());
+export const updatePracticeSchema = createPracticeSchema;

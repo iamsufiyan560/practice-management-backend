@@ -19,11 +19,7 @@ export const optionalString50 = (field: string) =>
   z.string().trim().max(50).optional();
 
 /* -------------------- COMMON FIELDS -------------------- */
-export const emailField = z
-  .string()
-  .trim()
-  .email("Invalid email format")
-  .max(255);
+export const emailField = z.email("Invalid email format").trim().max(255);
 
 export const optionalEmailField = emailField.optional();
 
@@ -66,7 +62,3 @@ export const optionalSpecialty = z
   .optional();
 
 /* -------------------- AT LEAST ONE FIELD FOR UPDATE -------------------- */
-export const atLeastOne = (schema: z.ZodObject<any>) =>
-  schema.refine((data) => Object.keys(data).length > 0, {
-    message: "At least one field is required to update",
-  });

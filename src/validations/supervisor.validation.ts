@@ -8,7 +8,6 @@ import {
   optionalLicenseState,
   optionalSqlDateField,
   optionalSpecialty,
-  atLeastOne,
 } from "./common.validation.js";
 
 export const createSupervisorSchema = z.object({
@@ -23,6 +22,6 @@ export const createSupervisorSchema = z.object({
   specialty: optionalSpecialty,
 });
 
-export const updateSupervisorSchema = atLeastOne(
-  createSupervisorSchema.omit({ email: true }).partial(),
-);
+export const updateSupervisorSchema = createSupervisorSchema.omit({
+  email: true,
+});

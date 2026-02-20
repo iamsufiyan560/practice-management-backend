@@ -206,19 +206,19 @@ export const updatePractice = async (req: Request, res: Response) => {
     await db
       .update(practices)
       .set({
-        name: name ?? existingPractice.name,
-        legalName: legalName ?? existingPractice.legalName,
-        taxId: taxId ?? existingPractice.taxId,
-        npiNumber: npiNumber ?? existingPractice.npiNumber,
-        phone: phone ?? existingPractice.phone,
-        email: email ?? existingPractice.email,
-        website: website ?? existingPractice.website,
-        addressLine1: addressLine1 ?? existingPractice.addressLine1,
-        addressLine2: addressLine2 ?? existingPractice.addressLine2,
-        city: city ?? existingPractice.city,
-        state: state ?? existingPractice.state,
-        postalCode: postalCode ?? existingPractice.postalCode,
-        country: country ?? existingPractice.country,
+        name,
+        legalName,
+        taxId,
+        npiNumber,
+        phone,
+        email,
+        website,
+        addressLine1,
+        addressLine2,
+        city,
+        state,
+        postalCode,
+        country,
         updatedBy,
       })
       .where(eq(practices.id, practiceId));

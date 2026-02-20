@@ -200,9 +200,9 @@ export const updateAdmin = async (req: Request, res: Response) => {
     await db
       .update(userPracticeRoles)
       .set({
-        firstName: firstName ?? existingAdmin.firstName,
-        lastName: lastName ?? existingAdmin.lastName,
-        phone: phone ?? existingAdmin.phone,
+        firstName,
+        lastName,
+        phone,
         updatedBy,
       })
       .where(

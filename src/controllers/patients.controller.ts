@@ -14,10 +14,10 @@ const insertPatient = async (
   patientData: {
     firstName: string;
     lastName: string;
-    email?: string;
-    phone?: string;
-    gender?: string;
-    dob?: Date;
+    email: string;
+    phone: string;
+    gender: string;
+    dob: Date;
     address?: {
       addressLine1?: string;
       addressLine2?: string;
@@ -42,12 +42,12 @@ const insertPatient = async (
       therapistId,
       firstName: patientData.firstName,
       lastName: patientData.lastName,
-      email: patientData.email || null,
-      phone: patientData.phone || null,
-      gender: patientData.gender || null,
-      dob: patientData.dob || null,
-      address: patientData.address || null,
-      emergencyContact: patientData.emergencyContact || null,
+      email: patientData.email,
+      phone: patientData.phone,
+      gender: patientData.gender,
+      dob: patientData.dob,
+      address: patientData.address,
+      emergencyContact: patientData.emergencyContact,
       createdBy,
       updatedBy: createdBy,
     })
@@ -84,8 +84,8 @@ export const createPatient = async (req: Request, res: Response) => {
         therapistId: null,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-        email: req.body.email || null,
-        phone: req.body.phone || null,
+        email: req.body.email,
+        phone: req.body.phone,
       },
       "Patient created successfully",
     );
@@ -120,8 +120,8 @@ export const createPatientByTherapist = async (req: Request, res: Response) => {
         therapistId,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-        email: req.body.email || null,
-        phone: req.body.phone || null,
+        email: req.body.email,
+        phone: req.body.phone,
       },
       "Patient created successfully",
     );
@@ -176,14 +176,14 @@ export const updatePatient = async (req: Request, res: Response) => {
     await db
       .update(patients)
       .set({
-        firstName: firstName ?? existingPatient.firstName,
-        lastName: lastName ?? existingPatient.lastName,
-        email: email ?? existingPatient.email,
-        phone: phone ?? existingPatient.phone,
-        gender: gender ?? existingPatient.gender,
-        dob: dob ?? existingPatient.dob,
-        address: address ?? existingPatient.address,
-        emergencyContact: emergencyContact ?? existingPatient.emergencyContact,
+        firstName,
+        lastName,
+        email,
+        phone,
+        gender,
+        dob,
+        address,
+        emergencyContact,
         updatedBy,
       })
       .where(

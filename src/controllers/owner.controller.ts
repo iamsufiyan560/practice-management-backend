@@ -373,8 +373,8 @@ export const updateOwnerProfile = async (req: Request, res: Response) => {
     await db
       .update(owners)
       .set({
-        firstName: firstName ?? owner.firstName,
-        lastName: lastName ?? owner.lastName,
+        firstName,
+        lastName,
         updatedBy,
       })
       .where(eq(owners.id, ownerId));

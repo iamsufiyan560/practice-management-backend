@@ -21,9 +21,9 @@ export const userPracticeRoles = mysqlTable(
 
     role: mysqlEnum("role", ["ADMIN", "SUPERVISOR", "THERAPIST"]).notNull(),
     email: varchar("email", { length: 255 }).notNull(),
-    firstName: varchar("first_name", { length: 100 }),
-    lastName: varchar("last_name", { length: 100 }),
-    phone: varchar("phone", { length: 50 }),
+    firstName: varchar("first_name", { length: 100 }).notNull(),
+    lastName: varchar("last_name", { length: 100 }).notNull(),
+    phone: varchar("phone", { length: 50 }).notNull(),
     createdBy: char("created_by", { length: 36 }),
     updatedBy: char("updated_by", { length: 36 }),
 

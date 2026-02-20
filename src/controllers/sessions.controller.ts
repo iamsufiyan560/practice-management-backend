@@ -109,11 +109,11 @@ export const createSession = async (req: Request, res: Response) => {
         scheduledStart: new Date(scheduledStart),
         scheduledEnd: new Date(scheduledEnd),
         sessionType,
-        subjective: subjective || null,
-        objective: objective || null,
-        assessment: assessment || null,
-        plan: plan || null,
-        additionalNotes: additionalNotes || null,
+        subjective,
+        objective,
+        assessment,
+        plan,
+        additionalNotes,
         reviewStatus: "DRAFT",
         createdBy,
         updatedBy: createdBy,
@@ -287,24 +287,14 @@ export const updateSession = async (req: Request, res: Response) => {
     await db
       .update(patientSessions)
       .set({
-        scheduledStart: scheduledStart
-          ? new Date(scheduledStart)
-          : existingSession.scheduledStart,
-        scheduledEnd: scheduledEnd
-          ? new Date(scheduledEnd)
-          : existingSession.scheduledEnd,
-        sessionType: sessionType ?? existingSession.sessionType,
-        subjective:
-          subjective !== undefined ? subjective : existingSession.subjective,
-        objective:
-          objective !== undefined ? objective : existingSession.objective,
-        assessment:
-          assessment !== undefined ? assessment : existingSession.assessment,
-        plan: plan !== undefined ? plan : existingSession.plan,
-        additionalNotes:
-          additionalNotes !== undefined
-            ? additionalNotes
-            : existingSession.additionalNotes,
+        scheduledStart: new Date(scheduledStart),
+        scheduledEnd: new Date(scheduledEnd),
+        sessionType,
+        subjective,
+        objective,
+        assessment,
+        plan,
+        additionalNotes,
         updatedBy,
       })
       .where(

@@ -113,10 +113,10 @@ export const createTherapist = async (req: Request, res: Response) => {
       firstName,
       lastName,
       phone,
-      licenseNumber: licenseNumber || null,
-      licenseState: licenseState || null,
-      licenseExpiry: licenseExpiry || null,
-      specialty: specialty || null,
+      licenseNumber,
+      licenseState,
+      licenseExpiry,
+      specialty,
     });
 
     // send email based on new or existing user
@@ -442,13 +442,13 @@ export const updateTherapist = async (req: Request, res: Response) => {
     await db
       .update(therapists)
       .set({
-        firstName: firstName ?? existingTherapist.firstName,
-        lastName: lastName ?? existingTherapist.lastName,
-        phone: phone ?? existingTherapist.phone,
-        licenseNumber: licenseNumber ?? existingTherapist.licenseNumber,
-        licenseState: licenseState ?? existingTherapist.licenseState,
-        licenseExpiry: licenseExpiry ?? existingTherapist.licenseExpiry,
-        specialty: specialty ?? existingTherapist.specialty,
+        firstName,
+        lastName,
+        phone,
+        licenseNumber,
+        licenseState,
+        licenseExpiry,
+        specialty,
       })
       .where(
         and(
@@ -463,9 +463,10 @@ export const updateTherapist = async (req: Request, res: Response) => {
         await db
           .update(userPracticeRoles)
           .set({
-            firstName: firstName ?? undefined,
-            lastName: lastName ?? undefined,
-            phone: phone ?? undefined,
+            firstName,
+            lastName,
+            phone,
+
             updatedBy,
           })
           .where(
